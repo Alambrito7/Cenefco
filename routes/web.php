@@ -184,7 +184,7 @@ Route::middleware(['auth', 'superadmin_only'])->group(function () {
 // 👥 REGISTROS - CLIENTES (Agente Ventas, Agente Admin, Admin, SuperAdmin)
 Route::middleware(['auth', 'module_permission:registros_clientes,view'])->group(function () {
     Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
-    Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+    
     
     Route::middleware(['module_permission:registros_clientes,create'])->group(function () {
         Route::get('/clientes/create', [ClienteController::class, 'create'])->name('clientes.create');
@@ -213,7 +213,7 @@ Route::middleware(['auth', 'module_permission:registros_clientes,view'])->group(
 // 👨‍🏫 REGISTROS - DOCENTES (Solo Agente Académico, Agente Admin, Admin, SuperAdmin)
 Route::middleware(['auth', 'module_permission:registros_docentes,view'])->group(function () {
     Route::get('/docentes', [DocenteController::class, 'index'])->name('docentes.index');
-    Route::get('/docentes/{docente}', [DocenteController::class, 'show'])->name('docentes.show');
+    //Route::get('/docentes/{docente}', [DocenteController::class, 'show'])->name('docentes.show');
     
     Route::middleware(['module_permission:registros_docentes,create'])->group(function () {
         Route::get('/docentes/create', [DocenteController::class, 'create'])->name('docentes.create');
@@ -242,7 +242,7 @@ Route::middleware(['auth', 'module_permission:registros_docentes,view'])->group(
 // 📚 REGISTROS - CURSOS (Solo Agente Académico, Agente Admin, Admin, SuperAdmin)
 Route::middleware(['auth', 'module_permission:registros_cursos,view'])->group(function () {
     Route::get('/cursos', [CursoController::class, 'index'])->name('cursos.index');
-    Route::get('/cursos/{curso}', [CursoController::class, 'show'])->name('cursos.show');
+    
     
     Route::middleware(['module_permission:registros_cursos,create'])->group(function () {
         Route::get('/cursos/create', [CursoController::class, 'create'])->name('cursos.create');
@@ -271,7 +271,7 @@ Route::middleware(['auth', 'module_permission:registros_cursos,view'])->group(fu
 // 👥 REGISTROS - PERSONAL (Solo Agente Admin, Admin, SuperAdmin)
 Route::middleware(['auth', 'module_permission:registros_personal,view'])->group(function () {
     Route::get('/personals', [PersonalController::class, 'index'])->name('personals.index');
-    Route::get('/personals/{personal}', [PersonalController::class, 'show'])->name('personals.show');
+    
     
     Route::middleware(['module_permission:registros_personal,create'])->group(function () {
         Route::get('/personals/create', [PersonalController::class, 'create'])->name('personals.create');
@@ -348,7 +348,7 @@ Route::middleware(['auth'])->group(function () {
 // =============================================================================
 Route::middleware(['auth', 'module_permission:ventas,view'])->group(function () {
     Route::get('/sector_ventas/rventas', [VentasController::class, 'index'])->name('rventas.index');
-    Route::get('/sector_ventas/rventas/{rventa}', [VentasController::class, 'show'])->name('rventas.show');
+    //Route::get('/sector_ventas/rventas/{rventa}', [VentasController::class, 'show'])->name('rventas.show');
     Route::get('/ventas/pendientes', [VentasController::class, 'pendientes'])->name('rventas.pendientes');
     Route::get('/ventas/por-area', [VentasController::class, 'ventasPorArea'])->name('ventas.por.area');
     Route::get('/ventas/por-curso', [VentasController::class, 'resumenPorCurso'])->name('ventas.por.curso');
@@ -447,7 +447,7 @@ Route::middleware(['auth', 'module_permission:certificados,view'])->group(functi
 // 🏆 COMPETENCIAS
 Route::middleware(['auth', 'module_permission:competencias,view'])->group(function () {
     Route::get('/competencias', [CompetenciaController::class, 'index'])->name('competencias.index');
-    Route::get('/competencias/{competencia}', [CompetenciaController::class, 'show'])->name('competencias.show');
+    
     
     Route::middleware(['module_permission:competencias,create'])->group(function () {
         Route::get('/competencias/create', [CompetenciaController::class, 'create'])->name('competencias.create');

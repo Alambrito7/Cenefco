@@ -1,65 +1,93 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="client-dashboard">
-    <!-- Header Premium para Cliente -->
-    <div class="client-header">
-        <div class="header-overlay"></div>
-        <div class="floating-elements">
-            <div class="floating-circle circle-1"></div>
-            <div class="floating-circle circle-2"></div>
-            <div class="floating-circle circle-3"></div>
-            <div class="floating-triangle triangle-1"></div>
-            <div class="floating-triangle triangle-2"></div>
-        </div>
-        <div class="header-content">
-            <div class="welcome-section">
-                <div class="client-avatar-container">
-                    <div class="client-avatar">
-                        <i class="fas fa-user-circle"></i>
-                        <div class="avatar-glow"></div>
-                    </div>
+<div class="modern-client-dashboard">
+    <!-- Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-gem"></i>
                 </div>
-                <div class="welcome-text">
-                <h1 class="client-welcome">
-            <span class="text-gradient">¡Bienvenido</span> 
-            <span class="user-name">{{ auth()->check() ? (auth()->user()->name ?? 'Usuario') : 'Invitado' }}</span> 
-            a tu Panel Premium!
-        </h1>
-                    <p class="client-subtitle">
-                        <i class="fas fa-sparkles"></i>
-                        Gestiona tus servicios de manera fácil y eficiente
-                    </p>
+                <span class="brand-text">CENEFCO</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="user-name">{{ auth()->check() ? (auth()->user()->name ?? 'Usuario') : 'Invitado' }}</span>
                 </div>
             </div>
-            <div class="header-benefits">
-                <div class="benefit-item">
-                    <div class="benefit-icon-wrapper">
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+                <div class="shape shape-4"></div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <div class="welcome-badge">
+                <i class="fas fa-crown"></i>
+                <span>Cliente Premium</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="gradient-text">¡Bienvenido</span> 
+                <span class="user-highlight">{{ auth()->check() ? (auth()->user()->name ?? 'Usuario') : 'Invitado' }}</span><br>
+                <span class="subtitle">a tu Panel Premium</span>
+            </h1>
+            <p class="hero-description">
+                <i class="fas fa-sparkles"></i>
+                Gestiona tus servicios de manera fácil y eficiente con tecnología de última generación
+            </p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-shield-check"></i>
                     </div>
-                    <span>Seguro y Confiable</span>
+                    <div class="stat-info">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Seguro y Confiable</span>
+                    </div>
                 </div>
-                <div class="benefit-item">
-                    <div class="benefit-icon-wrapper">
+                <div class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <span>Disponible 24/7</span>
+                    <div class="stat-info">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Disponible Siempre</span>
+                    </div>
                 </div>
-                <div class="benefit-item">
-                    <div class="benefit-icon-wrapper">
+                <div class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <span>Soporte Técnico</span>
+                    <div class="stat-info">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Soporte Técnico</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Contenido Principal -->
-    <div class="client-content">
-        <div class="content-wrapper">
-            <!-- Mensaje de Bienvenida Personalizado -->
-            <div class="welcome-message">
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Welcome Message -->
+            <section class="welcome-message">
+                <div class="message-bg-effect"></div>
                 <div class="message-content">
                     <h2>
                         <i class="fas fa-star-of-david"></i>
@@ -87,35 +115,30 @@
                         <div class="illustration-glow"></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Módulo Principal - Venta Cliente -->
-            <div class="main-module-section">
-                <div class="section-title">
-                    <h2>
+            <!-- Sales Panel Section -->
+            <section class="sales-section">
+                <div class="section-header">
+                    <h2 class="section-title">
                         <span class="title-icon">💼</span>
                         Área de Ventas Premium
                     </h2>
-                    <p>Accede a tu historial de compras y gestiona tus cursos</p>
+                    <p class="section-subtitle">Accede a tu historial de compras y gestiona tus cursos</p>
                 </div>
 
-                <div class="client-module-card premium">
-                    <div class="module-decoration">
-                        <div class="decoration-circle"></div>
-                        <div class="decoration-dots"></div>
-                        <div class="sparkles">
-                            <span class="sparkle sparkle-1">✨</span>
-                            <span class="sparkle sparkle-2">⭐</span>
-                            <span class="sparkle sparkle-3">✨</span>
-                        </div>
+                <div class="sales-card">
+                    <div class="card-bg-effect"></div>
+                    <div class="sparkles">
+                        <span class="sparkle sparkle-1">✨</span>
+                        <span class="sparkle sparkle-2">⭐</span>
+                        <span class="sparkle sparkle-3">✨</span>
                     </div>
                     
-                    <div class="module-header">
-                        <div class="module-icon-wrapper">
-                            <div class="icon-background">
-                                <i class="fas fa-shopping-cart module-icon"></i>
-                            </div>
-                            <div class="icon-pulse"></div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                            <div class="icon-glow"></div>
                         </div>
                         <div class="premium-badge">
                             <i class="fas fa-crown"></i>
@@ -123,52 +146,50 @@
                             <div class="badge-glow"></div>
                         </div>
                     </div>
-
-                    <div class="module-body">
-                        <h3 class="module-title">
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">
                             <span class="gradient-text">Panel de Ventas</span>
                         </h3>
-                        <p class="module-description">
+                        <p class="card-description">
                             Consulta el historial completo de tus cursos adquiridos, revisa el estado de tus compras y accede a toda la información de tus servicios contratados.
                         </p>
                         
-                        <div class="module-features">
-                            <div class="feature-list">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <span>Historial completo de compras</span>
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <span>Estado de cursos en tiempo real</span>
+                                <span>Historial completo de compras</span>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <span>Descargas y certificados</span>
+                                <span>Estado de cursos en tiempo real</span>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <span>Soporte técnico directo</span>
+                                <span>Descargas y certificados</span>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
+                                <span>Soporte técnico directo</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="module-footer">
-                        <a href="{{ route('cliente.panel.superadmin') }}" class="premium-btn">
+                    <div class="card-footer">
+                        <a href="{{ route('cliente.panel.superadmin') }}" class="cta-button" id="salesBtn">
                             <span class="btn-text">Acceder a mis Ventas</span>
                             <div class="btn-icon">
                                 <i class="fas fa-arrow-right"></i>
                             </div>
-                            <div class="btn-shine"></div>
+                            <div class="btn-glow"></div>
                             <div class="btn-particles">
                                 <span class="particle"></span>
                                 <span class="particle"></span>
@@ -177,86 +198,101 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Sección de Beneficios -->
-            <div class="benefits-section">
-                <h3>
-                    <span class="emoji">🚀</span>
-                    ¿Por qué elegir nuestros servicios?
-                </h3>
+            <!-- Benefits Section -->
+            <section class="benefits-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">🚀</span>
+                        ¿Por qué elegir nuestros servicios?
+                    </h2>
+                </div>
+                
                 <div class="benefits-grid">
                     <div class="benefit-card">
+                        <div class="card-glow-effect"></div>
                         <div class="benefit-icon">
                             <i class="fas fa-award"></i>
                             <div class="icon-bg-glow"></div>
                         </div>
                         <h4>Calidad Garantizada</h4>
-                        <p>Contenido de alta calidad respaldado por expertos</p>
-                        <div class="card-glow"></div>
+                        <p>Contenido de alta calidad respaldado por expertos en la industria</p>
                     </div>
                     <div class="benefit-card">
+                        <div class="card-glow-effect"></div>
                         <div class="benefit-icon">
                             <i class="fas fa-infinity"></i>
                             <div class="icon-bg-glow"></div>
                         </div>
                         <h4>Acceso Ilimitado</h4>
-                        <p>Disfruta de acceso sin restricciones a tu contenido</p>
-                        <div class="card-glow"></div>
+                        <p>Disfruta de acceso sin restricciones a todo tu contenido premium</p>
                     </div>
                     <div class="benefit-card">
+                        <div class="card-glow-effect"></div>
                         <div class="benefit-icon">
                             <i class="fas fa-mobile-alt"></i>
                             <div class="icon-bg-glow"></div>
                         </div>
                         <h4>Multiplataforma</h4>
-                        <p>Accede desde cualquier dispositivo, en cualquier momento</p>
-                        <div class="card-glow"></div>
+                        <p>Accede desde cualquier dispositivo, en cualquier momento y lugar</p>
                     </div>
                     <div class="benefit-card">
+                        <div class="card-glow-effect"></div>
                         <div class="benefit-icon">
                             <i class="fas fa-users"></i>
                             <div class="icon-bg-glow"></div>
                         </div>
                         <h4>Comunidad Activa</h4>
-                        <p>Conecta con otros usuarios y comparte experiencias</p>
-                        <div class="card-glow"></div>
+                        <p>Conecta con otros usuarios y comparte experiencias valiosas</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Sección de Contacto -->
-            <div class="contact-section">
+            <!-- Contact Section -->
+            <section class="contact-section">
+                <div class="contact-bg"></div>
                 <div class="contact-content">
-                    <h3>
-                        <span class="emoji">💬</span>
+                    <h3 class="contact-title">
+                        <span class="title-icon">💬</span>
                         ¿Necesitas ayuda?
                     </h3>
-                    <p>Nuestro equipo está disponible para asistirte en cualquier momento</p>
-                    <div class="contact-options">
-                        <div class="contact-option">
+                    <p class="contact-description">
+                        Nuestro equipo está disponible para asistirte en cualquier momento
+                    </p>
+                    <div class="contact-grid">
+                        <div class="contact-card">
                             <div class="contact-icon">
                                 <i class="fas fa-envelope"></i>
                             </div>
-                            <span>cenefco@gmail.com</span>
+                            <div class="contact-info">
+                                <span class="contact-label">Email</span>
+                                <span class="contact-value">cenefco@gmail.com</span>
+                            </div>
                         </div>
-                        <div class="contact-option">
+                        <div class="contact-card">
                             <div class="contact-icon">
                                 <i class="fas fa-phone"></i>
                             </div>
-                            <span>+591 60100541</span>
+                            <div class="contact-info">
+                                <span class="contact-label">Teléfono</span>
+                                <span class="contact-value">+591 60100541</span>
+                            </div>
                         </div>
-                        <div class="contact-option">
+                        <div class="contact-card">
                             <div class="contact-icon">
                                 <i class="fas fa-comments"></i>
                             </div>
-                            <span>Chat en vivo disponible</span>
+                            <div class="contact-info">
+                                <span class="contact-label">Chat</span>
+                                <span class="contact-value">Disponible en vivo</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </div>
+    </main>
 </div>
 
 <style>
@@ -266,231 +302,372 @@
         box-sizing: border-box;
     }
 
-    .client-dashboard {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --dark-bg: #0f0f23;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.7);
+        --text-accent: #667eea;
+        --shadow-primary: 0 8px 32px rgba(31, 38, 135, 0.37);
+        --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+
+    body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        position: relative;
+        background: var(--dark-bg);
+        color: var(--text-primary);
+        line-height: 1.6;
         overflow-x: hidden;
     }
 
-    .client-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        padding: 4rem 2rem;
+    .modern-client-dashboard {
+        min-height: 100vh;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(79, 172, 254, 0.1) 0%, transparent 50%),
+            var(--dark-bg);
+    }
+
+    /* Navigation */
+    .top-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(15, 15, 35, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 800;
+        font-size: 1.25rem;
+    }
+
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-gradient);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        color: var(--text-primary);
+    }
+
+    .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .notification-dot {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background: #ff4757;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .user-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        padding: 120px 2rem 80px;
         position: relative;
         overflow: hidden;
     }
 
-    .header-overlay {
+    .hero-bg {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-        opacity: 0.4;
-    }
-
-    .floating-elements {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
         overflow: hidden;
     }
 
-    .floating-circle {
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .shape {
         position: absolute;
         border-radius: 50%;
-        background: rgba(255,255,255,0.1);
+        background: var(--primary-gradient);
+        opacity: 0.1;
         animation: float 6s ease-in-out infinite;
     }
 
-    .circle-1 {
-        width: 80px;
-        height: 80px;
+    .shape-1 {
+        width: 100px;
+        height: 100px;
         top: 20%;
         left: 10%;
         animation-delay: 0s;
     }
 
-    .circle-2 {
-        width: 60px;
-        height: 60px;
-        top: 60%;
+    .shape-2 {
+        width: 150px;
+        height: 150px;
+        top: 50%;
         right: 15%;
         animation-delay: 2s;
+        background: var(--secondary-gradient);
     }
 
-    .circle-3 {
-        width: 100px;
-        height: 100px;
-        bottom: 10%;
-        left: 70%;
+    .shape-3 {
+        width: 80px;
+        height: 80px;
+        bottom: 20%;
+        left: 60%;
         animation-delay: 4s;
+        background: var(--accent-gradient);
     }
 
-    .floating-triangle {
-        position: absolute;
-        width: 0;
-        height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-bottom: 35px solid rgba(255,255,255,0.1);
-        animation: rotate 10s linear infinite;
-    }
-
-    .triangle-1 {
-        top: 30%;
-        right: 20%;
+    .shape-4 {
+        width: 120px;
+        height: 120px;
+        top: 70%;
+        left: 20%;
         animation-delay: 1s;
     }
 
-    .triangle-2 {
-        bottom: 20%;
-        left: 20%;
-        animation-delay: 3s;
-    }
-
-    .header-content {
+    .hero-content {
         max-width: 1200px;
         margin: 0 auto;
+        text-align: center;
         position: relative;
         z-index: 2;
     }
 
-    .welcome-section {
-        display: flex;
+    .welcome-badge {
+        display: inline-flex;
         align-items: center;
-        gap: 2rem;
-        margin-bottom: 3rem;
-        color: white;
+        gap: 0.5rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        margin-bottom: 2rem;
+        font-weight: 600;
+        color: #ffd700;
     }
 
-    .client-avatar-container {
-        position: relative;
+    .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
     }
 
-    .client-avatar {
-        font-size: 5rem;
-        color: rgba(255,255,255,0.95);
-        animation: pulse 2s infinite;
-        position: relative;
-        z-index: 2;
-    }
-
-    .avatar-glow {
-        position: absolute;
-        top: -20px;
-        left: -20px;
-        right: -20px;
-        bottom: -20px;
-        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: glow 3s ease-in-out infinite;
-    }
-
-    .welcome-text h1 {
-        font-size: 3rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-
-    .text-gradient {
-        background: linear-gradient(45deg, #ffd700, #ffed4e, #fff);
+    .gradient-text {
+        background: var(--primary-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: shimmer 3s ease-in-out infinite;
     }
 
-    .client-subtitle {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        font-weight: 400;
+    .user-highlight {
+        color: #ffd700;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .hero-description {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
     }
 
-    .header-benefits {
+    .hero-stats {
         display: flex;
         justify-content: center;
         gap: 2rem;
         flex-wrap: wrap;
     }
 
-    .benefit-item {
+    .stat-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 1.5rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        background: rgba(255,255,255,0.15);
-        padding: 1.5rem 2.5rem;
-        border-radius: 60px;
-        backdrop-filter: blur(15px);
-        border: 2px solid rgba(255,255,255,0.2);
-        color: white;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
+        transition: all 0.3s ease;
+        min-width: 180px;
     }
 
-    .benefit-item:hover {
-        transform: translateY(-5px) scale(1.05);
-        background: rgba(255,255,255,0.25);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-glow);
     }
 
-    .benefit-icon-wrapper {
-        width: 40px;
-        height: 40px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-gradient);
+        border-radius: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
     }
 
-    .client-content {
-        background: #f8fafc;
-        padding: 5rem 2rem;
-        margin-top: -40px;
-        border-radius: 40px 40px 0 0;
-        position: relative;
-        z-index: 1;
-        box-shadow: 0 -20px 40px rgba(0,0,0,0.1);
+    .stat-number {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
     }
 
-    .content-wrapper {
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    /* Main Content */
+    /* REEMPLÁZALO POR: */
+.main-content {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+    padding: 0 2rem 5rem;
+    color: white;
+}
+
+    .container {
         max-width: 1200px;
         margin: 0 auto;
     }
 
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .title-icon {
+        font-size: 2rem;
+        animation: bounce 2s infinite;
+    }
+
+    .section-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Welcome Message */
     .welcome-message {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 3rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
         border-radius: 25px;
-        margin-bottom: 4rem;
-        box-shadow: 0 20px 60px rgba(102,126,234,0.3);
+        padding: 3rem;
+        margin-bottom: 6rem;
         position: relative;
         overflow: hidden;
     }
 
-    .welcome-message::before {
-        content: '';
+    .message-bg-effect {
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
-        background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent);
+        background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.1), transparent);
         animation: rotate 10s linear infinite;
     }
 
@@ -511,7 +688,7 @@
 
     .message-content p {
         font-size: 1.2rem;
-        opacity: 0.9;
+        color: var(--text-secondary);
         line-height: 1.7;
         margin-bottom: 2rem;
     }
@@ -524,24 +701,24 @@
 
     .stat-item {
         text-align: center;
-        background: rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.05);
         padding: 1rem;
         border-radius: 15px;
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid var(--glass-border);
         min-width: 80px;
     }
 
-    .stat-number {
+    .stat-item .stat-number {
         display: block;
         font-size: 1.5rem;
         font-weight: 700;
         color: #ffd700;
     }
 
-    .stat-label {
+    .stat-item .stat-label {
         font-size: 0.9rem;
-        opacity: 0.8;
+        color: var(--text-secondary);
     }
 
     .message-illustration {
@@ -567,79 +744,36 @@
         animation: glow 2s ease-in-out infinite;
     }
 
-    .main-module-section {
-        margin-bottom: 5rem;
+    /* Sales Section */
+    .sales-section {
+        margin-bottom: 6rem;
     }
 
-    .section-title {
-        text-align: center;
-        margin-bottom: 4rem;
-    }
-
-    .section-title h2 {
-        font-size: 2.8rem;
-        color: #2d3748;
-        margin-bottom: 1rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .title-icon {
-        font-size: 2.5rem;
-        animation: bounce 2s infinite;
-    }
-
-    .section-title p {
-        color: #718096;
-        font-size: 1.2rem;
-    }
-
-    .client-module-card {
-        background: white;
+    .sales-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    color: white;
+        border: 1px solid var(--glass-border);
         border-radius: 30px;
-        padding: 4rem;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.12);
-        border: 2px solid rgba(102,126,234,0.1);
+        padding: 3rem;
         position: relative;
         overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.5s ease;
     }
 
-    .client-module-card:hover {
+    .sales-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+        box-shadow: var(--shadow-glow);
     }
 
-    .module-decoration {
+    .card-bg-effect {
         position: absolute;
-        top: -60px;
-        right: -60px;
-        width: 250px;
-        height: 250px;
-        opacity: 0.1;
-    }
-
-    .decoration-circle {
-        width: 100%;
-        height: 100%;
-        border: 4px solid #667eea;
-        border-radius: 50%;
-        animation: rotate 25s linear infinite;
-    }
-
-    .decoration-dots {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 15px;
-        height: 15px;
-        background: #667eea;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        animation: rotate 20s linear infinite;
     }
 
     .sparkles {
@@ -648,6 +782,7 @@
         left: 0;
         width: 100%;
         height: 100%;
+        pointer-events: none;
     }
 
     .sparkle {
@@ -674,56 +809,51 @@
         animation-delay: 2s;
     }
 
-    .module-header {
+    .card-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 2.5rem;
-    }
-
-    .module-icon-wrapper {
+        margin-bottom: 2rem;
         position: relative;
+        z-index: 2;
     }
 
-    .icon-background {
-        width: 90px;
-        height: 90px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 25px;
+    .card-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-gradient);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 15px 40px rgba(102,126,234,0.4);
-        transition: all 0.3s ease;
+        font-size: 2rem;
+        position: relative;
+        box-shadow: var(--shadow-primary);
     }
 
-    .module-icon {
-        font-size: 2.5rem;
-        color: white;
-    }
-
-    .icon-pulse {
+    .icon-glow {
         position: absolute;
         top: -5px;
         left: -5px;
-        width: calc(100% + 10px);
-        height: calc(100% + 10px);
-        border: 3px solid #667eea;
+        right: -5px;
+        bottom: -5px;
+        background: var(--primary-gradient);
         border-radius: 25px;
-        animation: pulse-ring 2s infinite;
+        opacity: 0.5;
+        animation: pulse 2s infinite;
+        z-index: -1;
     }
 
     .premium-badge {
         background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
         color: #744210;
-        padding: 1rem 2rem;
-        border-radius: 30px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
         font-weight: 700;
         display: flex;
         align-items: center;
-        gap: 0.8rem;
-        font-size: 1rem;
-        box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+        gap: 0.5rem;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
         position: relative;
         overflow: hidden;
     }
@@ -738,105 +868,98 @@
         animation: shine 3s ease-in-out infinite;
     }
 
-    .module-body {
-        margin-bottom: 3rem;
-    }
-
-    .module-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #2d3748;
-        margin-bottom: 2rem;
-    }
-
-    .gradient-text {
-        background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradient-shift 3s ease-in-out infinite;
-    }
-
-    .module-description {
-        font-size: 1.2rem;
-        color: #4a5568;
-        line-height: 1.8;
+    .card-content {
+        position: relative;
+        z-index: 2;
         margin-bottom: 2.5rem;
     }
 
-    .feature-list {
+    .card-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-description {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
     }
 
     .feature-item {
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 15px;
-        color: #2d3748;
-        font-weight: 600;
+        border: 1px solid var(--glass-border);
         transition: all 0.3s ease;
-        border: 2px solid transparent;
     }
 
     .feature-item:hover {
         transform: translateX(10px);
-        border-color: #667eea;
-        box-shadow: 0 10px 30px rgba(102,126,234,0.2);
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .feature-icon {
         width: 40px;
         height: 40px;
         background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
-        border-radius: 50%;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        box-shadow: 0 5px 15px rgba(56,161,105,0.3);
+        font-size: 1.1rem;
     }
 
-    .premium-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .card-footer {
+        position: relative;
+        z-index: 2;
+    }
+
+    .cta-button {
+        background: var(--primary-gradient);
         color: white;
-        padding: 1.5rem 3rem;
-        border-radius: 20px;
+        padding: 1.25rem 2.5rem;
+        border-radius: 15px;
         text-decoration: none;
         font-weight: 700;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         display: inline-flex;
         align-items: center;
         gap: 1rem;
         position: relative;
         overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-primary);
     }
 
-    .premium-btn:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 25px 60px rgba(102,126,234,0.6);
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
         color: white;
         text-decoration: none;
     }
 
-    .btn-shine {
+    .btn-glow {
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
         transition: left 0.6s ease;
     }
 
-    .premium-btn:hover .btn-shine {
+    .cta-button:hover .btn-glow {
         left: 100%;
     }
 
@@ -862,70 +985,63 @@
     .particle:nth-child(2) { top: 60%; right: 20%; animation-delay: 1s; }
     .particle:nth-child(3) { bottom: 20%; left: 60%; animation-delay: 2s; }
 
+    /* Benefits Section */
     .benefits-section {
-        margin-bottom: 5rem;
-    }
-
-    .benefits-section h3 {
-        text-align: center;
-        font-size: 2.5rem;
-        color: #2d3748;
-        margin-bottom: 4rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .emoji {
-        font-size: 2.5rem;
-        animation: bounce 2s infinite;
+        margin-bottom: 6rem;
     }
 
     .benefits-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2.5rem;
+        gap: 2rem;
     }
 
     .benefit-card {
-        background: white;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
         padding: 2.5rem;
-        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 2px solid #e2e8f0;
         position: relative;
         overflow: hidden;
+        transition: all 0.4s ease;
     }
 
     .benefit-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-        border-color: #667eea;
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-glow);
+    }
+
+    .card-glow-effect {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        animation: rotate 15s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .benefit-card:hover .card-glow-effect {
+        opacity: 1;
     }
 
     .benefit-icon {
         width: 80px;
         height: 80px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--primary-gradient);
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 2rem;
-        color: white;
+        margin: 0 auto 1.5rem;
         font-size: 2rem;
-        box-shadow: 0 15px 40px rgba(102,126,234,0.3);
+        box-shadow: var(--shadow-primary);
         position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .benefit-card:hover .benefit-icon {
-        transform: scale(1.1);
-        box-shadow: 0 20px 50px rgba(102,126,234,0.5);
+        z-index: 2;
     }
 
     .icon-bg-glow {
@@ -946,53 +1062,40 @@
     }
 
     .benefit-card h4 {
-        color: #2d3748;
         font-size: 1.5rem;
-        margin-bottom: 1.5rem;
         font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
     }
 
     .benefit-card p {
-        color: #4a5568;
-        line-height: 1.7;
-        font-size: 1.1rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
     }
 
-    .card-glow {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: conic-gradient(from 0deg, transparent, rgba(102,126,234,0.1), transparent);
-        animation: rotate 8s linear infinite;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .benefit-card:hover .card-glow {
-        opacity: 1;
-    }
-
+    /* Contact Section */
     .contact-section {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        color: white;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 30px;
         padding: 4rem;
-        border-radius: 25px;
-        text-align: center;
         position: relative;
         overflow: hidden;
+        text-align: center;
     }
 
-    .contact-section::before {
-        content: '';
+    .contact-bg {
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: rotate 15s linear infinite;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+        animation: rotate 25s linear infinite;
     }
 
     .contact-content {
@@ -1000,79 +1103,82 @@
         z-index: 2;
     }
 
-    .contact-content h3 {
+    .contact-title {
         font-size: 2.5rem;
-        margin-bottom: 1.5rem;
         font-weight: 800;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 1rem;
     }
 
-    .contact-content p {
-        font-size: 1.2rem;
-        opacity: 0.9;
+    .contact-description {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
         margin-bottom: 3rem;
     }
 
-    .contact-options {
-        display: flex;
-        justify-content: center;
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 2rem;
-        flex-wrap: wrap;
     }
 
-    .contact-option {
+    .contact-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
         display: flex;
         align-items: center;
-        gap: 1rem;
-        background: rgba(255,255,255,0.15);
-        padding: 1.5rem 2rem;
-        border-radius: 60px;
-        backdrop-filter: blur(15px);
-        border: 2px solid rgba(255,255,255,0.2);
+        gap: 1.5rem;
         transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
     }
 
-    .contact-option:hover {
-        transform: translateY(-3px);
-        background: rgba(255,255,255,0.25);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    .contact-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .contact-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        background: var(--primary-gradient);
+        border-radius: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        flex-shrink: 0;
     }
 
-    /* Animaciones */
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+    .contact-info {
+        text-align: left;
     }
 
-    @keyframes glow {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
+    .contact-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
     }
 
-    @keyframes pulse-ring {
-        0% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(1.3); opacity: 0; }
+    .contact-value {
+        display: block;
+        font-weight: 600;
+        font-size: 1.1rem;
     }
 
+    /* Animations */
     @keyframes float {
         0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-15px); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 1; }
     }
 
     @keyframes rotate {
@@ -1085,9 +1191,9 @@
         50% { transform: translateY(-10px); }
     }
 
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
+    @keyframes glow {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
     }
 
     @keyframes twinkle {
@@ -1100,11 +1206,6 @@
         100% { transform: translateX(100%); }
     }
 
-    @keyframes gradient-shift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-
     @keyframes particle-float {
         0%, 100% { transform: translateY(0px); opacity: 0.3; }
         50% { transform: translateY(-10px); opacity: 1; }
@@ -1112,110 +1213,358 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .client-header {
-            padding: 2rem 1rem;
+        .nav-container {
+            padding: 1rem;
         }
-        
-        .welcome-section {
-            flex-direction: column;
-            text-align: center;
-            gap: 1.5rem;
+
+        .hero-section {
+            padding: 100px 1rem 60px;
         }
-        
-        .welcome-text h1 {
-            font-size: 2.2rem;
-        }
-        
-        .header-benefits {
+
+        .hero-stats {
             gap: 1rem;
         }
-        
-        .benefit-item {
-            padding: 1rem 1.5rem;
+
+        .stat-card {
+            min-width: 120px;
+            padding: 1rem;
+            flex-direction: column;
+            text-align: center;
         }
-        
-        .client-content {
-            padding: 3rem 1rem;
+
+        .main-content {
+            padding: 0 1rem 3rem;
         }
-        
-        .client-module-card {
-            padding: 2.5rem;
+
+        .sales-card {
+            padding: 2rem;
         }
-        
+
         .welcome-message {
             flex-direction: column;
             text-align: center;
             padding: 2rem;
         }
-        
+
         .message-illustration {
             margin-top: 2rem;
         }
-        
+
         .message-stats {
             justify-content: center;
         }
-        
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
         .benefits-grid {
             grid-template-columns: 1fr;
         }
-        
-        .contact-options {
+
+        .contact-section {
+            padding: 2.5rem;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: center;
+        }
+
+        .section-title {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .user-menu .user-name {
+            display: none;
+        }
+
+        .card-header {
             flex-direction: column;
             gap: 1rem;
-        }
-        
-        .section-title h2 {
-            font-size: 2.2rem;
-        }
-        
-        .module-title {
-            font-size: 2rem;
-        }
-        
-        .floating-circle,
-        .floating-triangle {
-            display: none;
+            align-items: center;
         }
     }
 
     @media (max-width: 480px) {
-        .welcome-text h1 {
-            font-size: 1.8rem;
-        }
-        
-        .client-avatar {
-            font-size: 4rem;
-        }
-        
-        .section-title h2 {
-            font-size: 1.8rem;
-        }
-        
-        .benefits-section h3 {
+        .hero-title {
             font-size: 2rem;
         }
-        
-        .contact-content h3 {
+        .section-title {
+            color: #ffffff;
+        }
+
+        .card-title {
             font-size: 2rem;
         }
-        
-        .client-module-card {
-            padding: 2rem;
+
+        .contact-title {
+            font-size: 2rem;
         }
-        
-        .welcome-message {
+
+        .sales-card {
             padding: 1.5rem;
         }
-        
-        .message-content h2 {
-            font-size: 1.8rem;
+
+        .benefit-card {
+            padding: 2rem;
         }
-        
-        .premium-btn {
-            padding: 1.2rem 2rem;
-            font-size: 1rem;
+
+        .contact-section {
+            padding: 2rem;
+        }
+
+        .cta-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .hero-stats {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-card {
+            width: 100%;
+            max-width: 200px;
         }
     }
+
+    /* Loading states */
+    .loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid transparent;
+        border-top: 2px solid var(--text-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Focus states for accessibility */
+    .cta-button:focus,
+    .nav-btn:focus,
+    .user-menu:focus {
+        outline: 2px solid var(--text-accent);
+        outline-offset: 2px;
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--dark-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-gradient);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simulate sales button functionality
+        const salesBtn = document.getElementById('salesBtn');
+        
+        if (salesBtn) {
+            salesBtn.addEventListener('click', function(e) {
+                // Add loading state
+                this.classList.add('loading');
+                this.style.pointerEvents = 'none';
+                
+                // Remove loading state after a short delay (in real app, this would be on page load)
+                setTimeout(() => {
+                    this.classList.remove('loading');
+                    this.style.pointerEvents = 'auto';
+                }, 800);
+            });
+        }
+
+        // Add smooth parallax effect to floating shapes
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            
+            shapes.forEach((shape, index) => {
+                const speed = 0.1 + (index * 0.05);
+                shape.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        const animatedElements = document.querySelectorAll('.benefit-card, .sales-card, .contact-section, .welcome-message');
+        animatedElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Add click effect to cards
+        const cards = document.querySelectorAll('.benefit-card, .contact-card');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Dynamic greeting based on time
+        const updateGreeting = () => {
+            const hour = new Date().getHours();
+            const heroTitle = document.querySelector('.hero-title');
+            let greeting = '¡Bienvenido';
+            
+            if (hour < 12) {
+                greeting = '¡Buenos días';
+            } else if (hour < 18) {
+                greeting = '¡Buenas tardes';
+            } else {
+                greeting = '¡Buenas noches';
+            }
+            
+            const gradientText = heroTitle?.querySelector('.gradient-text');
+            if (gradientText) {
+                gradientText.textContent = greeting;
+            }
+        };
+
+        updateGreeting();
+
+        // Add notification system
+        const showNotification = (message, type = 'info') => {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 1rem;
+                ">
+                    <span>${message}</span>
+                    <button class="notification-close" style="
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 20px;
+                        height: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">&times;</button>
+                </div>
+            `;
+            
+            // Add notification styles
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 15px;
+                padding: 1rem;
+                z-index: 10000;
+                min-width: 300px;
+                max-width: 400px;
+                color: var(--text-primary);
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                box-shadow: var(--shadow-glow);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Close button functionality
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', () => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            });
+            
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    notification.style.transform = 'translateX(400px)';
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        };
+
+        // Welcome notification
+        setTimeout(() => {
+            showNotification('¡Bienvenido a tu Panel Premium! Aquí puedes gestionar todos tus servicios.', 'success');
+        }, 2000);
+    });
+</script>
 @endsection

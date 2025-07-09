@@ -297,10 +297,7 @@
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Volver al listado
                                 </a>
-                                <a href="{{ route('docentes.show', $docente->id) }}" class="btn btn-outline-info">
-                                    <i class="fas fa-eye me-2"></i>
-                                    Ver detalle
-                                </a>
+                                
                             </div>
                             <div>
                                 <button type="button" class="btn btn-outline-danger me-2" onclick="resetForm()">

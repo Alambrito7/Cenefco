@@ -17,6 +17,7 @@
             --dark-color: #1f2937;
             --light-bg: #f8fafc;
             --sidebar-width: 280px;
+            --sidebar-header-height: 140px;
             --silver-light: #e2e8f0;
             --silver-medium: #cbd5e1;
             --silver-dark: #64748b;
@@ -66,6 +67,7 @@
             left: 0;
             width: var(--sidebar-width);
             height: 100vh;
+            height: 100dvh; /* Altura dinámica para móvil */
             background: rgba(248, 250, 252, 0.95);
             backdrop-filter: blur(10px);
             border-right: 1px solid rgba(203, 213, 225, 0.3);
@@ -73,6 +75,8 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1050;
             box-shadow: 0 0 40px rgba(100, 116, 139, 0.15);
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar.show {
@@ -86,6 +90,8 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
+            min-height: var(--sidebar-header-height);
         }
 
         .sidebar-header::before {
@@ -127,9 +133,13 @@
         }
 
         .sidebar-nav {
+            flex: 1;
             padding: 20px 0;
-            height: calc(100vh - 140px);
             overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
 
         .sidebar-nav::-webkit-scrollbar {
@@ -145,8 +155,16 @@
             border-radius: 2px;
         }
 
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.5);
+        }
+
         .nav-section {
             margin-bottom: 20px;
+        }
+
+        .nav-section:last-child {
+            margin-bottom: 30px; /* Más espacio en la última sección */
         }
 
         .nav-section-title {
@@ -213,6 +231,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .nav-text {
@@ -226,6 +245,7 @@
             border-radius: 12px;
             font-size: 0.75rem;
             margin-left: 8px;
+            flex-shrink: 0;
         }
 
         /* Overlay */
@@ -235,6 +255,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            height: 100dvh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
             z-index: 1040;
@@ -280,18 +301,99 @@
             margin-top: 8px;
         }
 
-        /* Responsive */
+        /* Responsive mejorado */
         @media (max-width: 768px) {
+            :root {
+                --sidebar-header-height: 120px;
+            }
+            
             .sidebar {
                 width: 100%;
+                width: 100vw;
+            }
+            
+            .sidebar-header {
+                padding: 20px 15px 15px;
+                min-height: var(--sidebar-header-height);
+            }
+            
+            .sidebar-title {
+                font-size: 1.2rem;
+            }
+            
+            .sidebar-subtitle {
+                font-size: 0.85rem;
+            }
+            
+            .role-badge {
+                font-size: 0.75rem;
+                padding: 3px 10px;
+            }
+            
+            .sidebar-nav {
+                padding: 15px 0 40px 0; /* Más padding bottom para móvil */
+            }
+            
+            .nav-section {
+                margin-bottom: 15px;
+            }
+            
+            .nav-section:last-child {
+                margin-bottom: 40px; /* Aún más espacio en la última sección en móvil */
+            }
+            
+            .nav-section-title {
+                padding: 6px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .nav-item {
+                margin: 3px 10px;
+            }
+            
+            .nav-link {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .nav-icon {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
+                font-size: 1rem;
             }
             
             .main-content {
-                padding: 90px 20px 20px;
+                padding: 90px 15px 20px;
+            }
+            
+            .dashboard-header {
+                padding: 20px;
+                margin-bottom: 20px;
             }
             
             .dashboard-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+            
+            .dashboard-subtitle {
+                font-size: 1rem;
+            }
+            
+            .menu-toggle {
+                width: 45px;
+                height: 45px;
+                top: 15px;
+                left: 15px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Mejorar el scroll en dispositivos iOS */
+        @supports (-webkit-touch-callout: none) {
+            .sidebar-nav {
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: y proximity;
             }
         }
 
@@ -451,32 +553,21 @@
                             </a>
                         </div>
                     @endif
-
-                    
-                    
-                    
                 </div>
             @endif
 
             {{-- Entrega de Material - SuperAdmin, Admin, Agente Ventas, Agente Administrativo --}}
-@canDo('entrega_material', 'view')
-    <div class="nav-item">
-        <a href="{{ route('entrega_materials.index') }}" class="nav-link" onclick="hideSidebar()">
-            <span class="nav-icon">📦</span>
-            <span class="nav-text">Entrega Material</span>
-            
-            {{-- Badge opcional para mostrar el rol que tiene acceso --}}
-            @hasAnyRole('agente_administrativo', 'agente_ventas')
-                <span class="badge badge-sm" style="background-color: {{ auth()->user()->getRoleColor() }}; font-size: 0.7em;">
-                    {{ auth()->user()->getPrimaryRole()->display_name ?? auth()->user()->role }}
-                </span>
-            @endhasAnyRole
-        </a>
-    </div>
-@endcanDo
-
-
-            
+            @canDo('entrega_material', 'view')
+                <div class="nav-section">
+                    <div class="nav-section-title">Logística</div>
+                    <div class="nav-item">
+                        <a href="{{ route('entrega_materials.index') }}" class="nav-link" onclick="hideSidebar()">
+                            <span class="nav-icon">📦</span>
+                            <span class="nav-text">Entrega Material</span>
+                        </a>
+                    </div>
+                </div>
+            @endcanDo
 
             {{-- VENTA CLIENTE - Todos los usuarios autenticados --}}
             <div class="nav-section">
@@ -515,34 +606,21 @@
                             <span class="nav-text">Cert. Docentes</span>
                         </a>
                     </div>
-                </div>
-            
-                <div class="nav-section">
-                    <div class="nav-section-title">Registros</div>            
-                {{-- Docentes - SuperAdmin, Admin, Agente Académico --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
-                        <div class="nav-item">
-                            <a href="{{ route('docentes.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">👨‍🏫</span>
-                                <span class="nav-text">Docentes</span>
-                            </a>
-                        </div>
-                    @endif
                     
-                    {{-- Cursos - SuperAdmin, Admin, Agente Académico --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
-                        <div class="nav-item">
-                            <a href="{{ route('cursos.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">📚</span>
-                                <span class="nav-text">Cursos</span>
-                            </a>
-                        </div>
-                    @endif
-
+                    <div class="nav-item">
+                        <a href="{{ route('docentes.index') }}" class="nav-link" onclick="hideSidebar()">
+                            <span class="nav-icon">👨‍🏫</span>
+                            <span class="nav-text">Docentes</span>
+                        </a>
                     </div>
-                
+                    
+                    <div class="nav-item">
+                        <a href="{{ route('cursos.index') }}" class="nav-link" onclick="hideSidebar()">
+                            <span class="nav-icon">📚</span>
+                            <span class="nav-text">Cursos</span>
+                        </a>
+                    </div>
+                </div>
             @endif
 
             {{-- ADMINISTRATIVO - SuperAdmin, Admin, Agente Admin --}}
@@ -578,11 +656,6 @@
                             <span class="nav-text">Control General</span>
                         </a>
                     </div>
-
-                    
-                    
-                    {{-- Arqueo - SuperAdmin, Admin, Agente Admin --}}
-                    
                 </div>
             @endif
 
@@ -648,13 +721,10 @@
                 </div>
             </div>
             @endauth
-        </div> action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            </div>
         </div>
     </nav>
 
+    
     <script>
         let sidebarVisible = false;
 
@@ -669,7 +739,17 @@
                 sidebar.classList.add('show');
                 overlay.classList.add('show');
                 toggleButton.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                
+                // Prevenir scroll del body solo en desktop
+                if (window.innerWidth > 768) {
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                // Scroll suave al top del sidebar en móvil
+                if (window.innerWidth <= 768) {
+                    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+                    sidebarNav.scrollTop = 0;
+                }
             } else {
                 sidebar.classList.remove('show');
                 overlay.classList.remove('show');
@@ -700,30 +780,47 @@
         // Manejar cambios de tamaño de pantalla
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768 && sidebarVisible) {
-                hideSidebar();
+                document.body.style.overflow = 'auto';
             }
         });
 
-        // Marcar enlace activo basado en la URL actual
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname;
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
+        // Mejorar el comportamiento del scroll en iOS
+        document.addEventListener('touchstart', function() {}, { passive: true });
+        document.addEventListener('touchmove', function() {}, { passive: true });
+
+        // Prevenir bounce scroll en iOS cuando el sidebar está abierto
+        document.addEventListener('touchmove', function(e) {
+            if (sidebarVisible && window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarNav = sidebar.querySelector('.sidebar-nav');
+                
+                // Solo prevenir si el scroll está en los límites
+                if (sidebarNav.scrollTop === 0 && e.touches[0].clientY > sidebarNav.getBoundingClientRect().top) {
+                    // Está en el top y tratando de hacer scroll hacia arriba
+                    if (e.touches[0].clientY > e.touches[0].lastClientY) {
+                        e.preventDefault();
+                    }
+                } else if (sidebarNav.scrollTop + sidebarNav.clientHeight >= sidebarNav.scrollHeight && 
+                          e.touches[0].clientY < sidebarNav.getBoundingClientRect().bottom) {
+                    // Está en el bottom y tratando de hacer scroll hacia abajo
+                    if (e.touches[0].clientY < e.touches[0].lastClientY) {
+                        e.preventDefault();
+                    }
                 }
-            });
+            }
+        }, { passive: false });
+
+        // Guardar la posición Y del touch para comparación
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 0) {
+                e.touches[0].lastClientY = e.touches[0].clientY;
+            }
         });
 
-        // Agregar efecto de clic a los enlaces
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Solo si no es el enlace de logout
-                if (!this.getAttribute('href').includes('logout')) {
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                }
-            });
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 0) {
+                e.touches[0].lastClientY = e.touches[0].clientY;
+            }
         });
     </script>
 </body>

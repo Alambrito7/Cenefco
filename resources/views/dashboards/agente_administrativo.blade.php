@@ -375,14 +375,7 @@
         </div>
     </div>
 
-    {{-- Gráfico de ventas --}}
-    <div class="chart-container">
-        <h4 class="chart-title">
-            <i class="fas fa-chart-bar me-2"></i>
-            Ventas del Año Actual
-        </h4>
-        <canvas id="ventasMesChart" height="100"></canvas>
-    </div>
+   
 </div>
 
 {{-- Scripts --}}
