@@ -196,6 +196,88 @@
         transform: scale(1.05);
     }
 
+
+    /* ============================================= */
+    /* ESTILOS PARA MODO OSCURO */
+    /* ============================================= */
+    
+    body.dark-mode {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .header-container {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+        color: #ecf0f1 !important;
+        border-color: #495057 !important;
+    }
+    
+    .dark-mode .header-title {
+        background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+    
+    .dark-mode .module-card {
+        background: #34495e !important;
+        color: #ecf0f1 !important;
+        border: 1px solid #495057 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .dark-mode .module-card:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    .dark-mode .module-title {
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .module-description {
+        color: #bdc3c7 !important;
+    }
+    
+    .dark-mode .admin-dropdown {
+        background: #34495e !important;
+        color: #ecf0f1 !important;
+        border-color: #495057 !important;
+    }
+    
+    .dark-mode .admin-dropdown h3 {
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .chart-container {
+        background: #34495e !important;
+        color: #ecf0f1 !important;
+        border: 1px solid #495057 !important;
+    }
+    
+    .dark-mode .chart-title {
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .section-title {
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .dark-mode-toggle {
+        background: rgba(236, 240, 241, 0.1) !important;
+        border-color: rgba(236, 240, 241, 0.2) !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .dark-mode .dark-mode-toggle:hover {
+        background: rgba(236, 240, 241, 0.2) !important;
+        color: #ecf0f1 !important;
+    }
+    
+    /* Transiciones suaves para el cambio de modo */
+    body, .header-container, .module-card, .admin-dropdown, .chart-container {
+        transition: all 0.3s ease !important;
+    }
+
     /* Colores específicos para cada módulo */
     .module-card[data-module="registros"] .module-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .module-card[data-module="registros"] .module-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
@@ -439,9 +521,9 @@
 {{-- Scripts --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Configuración del gráfico
+    // Configuración del gráfico (mantener igual)
     const ctx = document.getElementById('ventasMesChart');
-    new Chart(ctx, {
+    const chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: {!! json_encode($meses ?? ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']) !!},
@@ -478,21 +560,68 @@
         }
     });
 
-    // Toggle Dark Mode
-    document.getElementById('darkModeToggle').addEventListener('click', function () {
-        document.body.classList.toggle('dark-mode');
-        const icon = this.querySelector('i');
+    // TOGGLE DARK MODE MEJORADO
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkModeToggle = document.getElementById('darkModeToggle');
         
-        if (document.body.classList.contains('dark-mode')) {
-            icon.className = 'fas fa-sun me-2';
-            this.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
-        } else {
-            icon.className = 'fas fa-moon me-2';
-            this.innerHTML = '<i class="fas fa-moon me-2"></i>Modo Oscuro';
+        // Verificar si ya hay preferencia guardada
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            updateToggleButton(true);
+            updateChartColors(true);
+        }
+        
+        // Event listener para el botón
+        darkModeToggle.addEventListener('click', function() {
+            const isCurrentlyDark = document.body.classList.contains('dark-mode');
+            
+            if (isCurrentlyDark) {
+                // Cambiar a modo claro
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'false');
+                updateToggleButton(false);
+                updateChartColors(false);
+            } else {
+                // Cambiar a modo oscuro
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'true');
+                updateToggleButton(true);
+                updateChartColors(true);
+            }
+        });
+        
+        // Función para actualizar el botón
+        function updateToggleButton(isDark) {
+            if (isDark) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon me-2"></i>Modo Oscuro';
+            }
+        }
+        
+        // Función para actualizar colores del gráfico
+        function updateChartColors(isDark) {
+            if (isDark) {
+                // Colores para modo oscuro
+                chart.options.scales.y.grid.color = 'rgba(255, 255, 255, 0.1)';
+                chart.options.scales.y.ticks.color = '#ecf0f1';
+                chart.options.scales.x.ticks.color = '#ecf0f1';
+                chart.data.datasets[0].backgroundColor = 'rgba(102, 126, 234, 0.6)';
+                chart.data.datasets[0].borderColor = 'rgba(102, 126, 234, 0.8)';
+            } else {
+                // Colores para modo claro
+                chart.options.scales.y.grid.color = 'rgba(0, 0, 0, 0.1)';
+                chart.options.scales.y.ticks.color = '#666';
+                chart.options.scales.x.ticks.color = '#666';
+                chart.data.datasets[0].backgroundColor = 'rgba(102, 126, 234, 0.8)';
+                chart.data.datasets[0].borderColor = 'rgba(102, 126, 234, 1)';
+            }
+            chart.update();
         }
     });
 
-    // Añadir efecto de parallax suave
+    // Efecto parallax suave (mantener igual)
     window.addEventListener('scroll', function() {
         const scrolled = window.pageYOffset;
         const header = document.querySelector('.header-container');

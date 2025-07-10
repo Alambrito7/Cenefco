@@ -252,13 +252,16 @@
                                                 </small>
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-success" 
-                                                        onclick="confirmarRestauracion({{ $competencia->id }}, '{{ $competencia->curso }}')"
-                                                        title="Restaurar competencia">
-                                                    <i class="fas fa-undo"></i> Restaurar
-                                                </button>
-                                            </td>
+    <form action="{{ route('competencias.restore', $competencia->id) }}" method="POST" style="display: inline;">
+        @csrf
+        <button type="submit" 
+                class="btn btn-sm btn-success" 
+                onclick="return confirm('¿Deseas restaurar la competencia: {{ $competencia->curso }}?')"
+                title="Restaurar competencia">
+            <i class="fas fa-undo"></i> Restaurar
+        </button>
+    </form>
+</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -279,6 +282,7 @@
 
 <form id="form-restaurar" method="POST" style="display: none;">
     @csrf
+    {{-- Quitar @method('POST') porque ya es POST por defecto --}}
 </form>
 
 {{-- Modal de confirmación --}}

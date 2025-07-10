@@ -23,6 +23,7 @@ use App\Http\Controllers\ControlGeneralController;
 use App\Http\Controllers\EntregaMaterialController;
 use App\Http\Controllers\VentasCentralizadasController;
 use App\Http\Controllers\RolePermissionController;
+use Illuminate\Http\Request;
 
 // =============================================================================
 // RUTAS PÚBLICAS
@@ -32,6 +33,29 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    
+    // Redirigir a la URL externa específica
+    return redirect()->away('https://cenefco.com/inicio-clases-virtuales');
+})->name('logout');
+
+// 📧 RUTA DE PRUEBA PARA CORREO (TEMPORAL)
+Route::get('/test-mail', function () {
+    try {
+        \Mail::raw('✅ Correo de prueba desde CENEFCO funcionando correctamente', function ($message) {
+            $message->to('tu-correo-personal@gmail.com') // ⚠️ CAMBIA POR TU CORREO PERSONAL
+                    ->subject('🎓 Prueba CENEFCO - Correo funcionando');
+        });
+        return '✅ ¡Correo enviado exitosamente! Revisa tu bandeja de entrada.';
+    } catch (\Exception $e) {
+        return '❌ Error: ' . $e->getMessage();
+    }
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -463,6 +487,8 @@ Route::middleware(['auth', 'module_permission:competencias,view'])->group(functi
         Route::delete('/competencias/{competencia}', [CompetenciaController::class, 'destroy'])->name('competencias.destroy');
     });
     
+   
+
     Route::middleware(['module_permission:competencias,restore'])->group(function () {
         Route::post('/competencias/{id}/restore', [CompetenciaController::class, 'restore'])->name('competencias.restore');
     });
@@ -477,8 +503,7 @@ Route::middleware(['auth', 'module_permission:competencias,view'])->group(functi
 Route::middleware(['auth', 'module_permission:certificados_docentes,view'])->group(function () {
     Route::get('/certificadosdocentes', [CertificadoDocenteController::class, 'index'])->name('certificadosdocentes.index');
     Route::get('/certificados_docentes', [CertificadoDocenteController::class, 'index'])->name('certificados_docentes.index');
-    Route::get('/certificadosdocentes/{certificadosdocente}', [CertificadoDocenteController::class, 'show'])->name('certificadosdocentes.show');
-    Route::get('/certificados_docentes/{certificados_docente}', [CertificadoDocenteController::class, 'show'])->name('certificados_docentes.show');
+    
     
     Route::middleware(['module_permission:certificados_docentes,create'])->group(function () {
         Route::get('/certificadosdocentes/create', [CertificadoDocenteController::class, 'create'])->name('certificadosdocentes.create');

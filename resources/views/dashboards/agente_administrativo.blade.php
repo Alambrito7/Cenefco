@@ -237,10 +237,7 @@
                 <i class="fas fa-tachometer-alt me-3"></i>
                 Panel de Control Agente Administrativo
             </h1>
-            <button id="darkModeToggle" class="dark-mode-toggle">
-                <i class="fas fa-moon me-2"></i>
-                Modo Oscuro
-            </button>
+            
         </div>
     </div>
 </div>

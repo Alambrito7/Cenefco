@@ -72,7 +72,7 @@ class CompetenciaController extends Controller
         $competencia = Competencia::findOrFail($id);
         $competencia->update($request->all());
 
-        return redirect()->route('modulos.competencias.index')->with('success', 'Competencia actualizada correctamente');
+        return redirect()->route('competencias.index')->with('success', 'Competencia actualizada correctamente.');
     }
 
     // Eliminar una competencia (eliminación lógica)
@@ -84,14 +84,19 @@ class CompetenciaController extends Controller
 
     }
 
-    // Restaurar una competencia eliminada
     public function restore($id)
-{
-    $competencia = Competencia::withTrashed()->findOrFail($id);
-    $competencia->restore();
-
-    return redirect()->route('competencias.index')->with('success', 'Competencia restaurada correctamente.');
-}
+    {
+        try {
+            $competencia = Competencia::withTrashed()->findOrFail($id);
+            $competencia->restore();
+            
+            return redirect()->route('competencias.index')
+                ->with('success', 'Competencia restaurada correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('competencias.index')
+                ->with('error', 'Error al restaurar la competencia: ' . $e->getMessage());
+        }
+    }
 
 public function exportExcel()
 {
