@@ -23,6 +23,7 @@ use App\Http\Controllers\ControlGeneralController;
 use App\Http\Controllers\EntregaMaterialController;
 use App\Http\Controllers\VentasCentralizadasController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\MaterialController;
 use Illuminate\Http\Request;
 
 // =============================================================================
@@ -632,6 +633,22 @@ Route::middleware(['auth', 'role:superadmin,agente_ventas'])->group(function () 
     Route::delete('/descuentos/{descuento}', [DescuentoController::class, 'destroy'])->name('descuentos.destroy');
     Route::post('/descuentos/{id}/restore', [DescuentoController::class, 'restore'])->name('descuentos.restore');
 });
+
+// OPCIÓN 1: Rutas completas con middleware (recomendado)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materials/create', [MaterialController::class, 'create'])->name('materials.create');
+    Route::post('/materials', [MaterialController::class, 'store'])->name('materials.store');
+    Route::get('/materials/{material}', [MaterialController::class, 'show'])->name('materials.show');
+    Route::get('/materials/{material}/edit', [MaterialController::class, 'edit'])->name('materials.edit');
+    Route::put('/materials/{material}', [MaterialController::class, 'update'])->name('materials.update');
+    Route::delete('/materials/{material}', [MaterialController::class, 'destroy'])->name('materials.destroy');
+    Route::put('/materials/{id}/restore', [MaterialController::class, 'restore'])->name('materials.restore');
+    Route::delete('/materials/{id}/force-destroy', [MaterialController::class, 'forceDestroy'])->name('materials.force-destroy');
+    Route::get('/materials/{material}/download', [MaterialController::class, 'download'])->name('materials.download');
+    Route::get('/api/materials/by-area', [MaterialController::class, 'getByArea'])->name('materials.by-area');
+    Route::get('/materials/export/all', [MaterialController::class, 'export'])->name('materials.export');
+});
 // =============================================================================
 // 📊 DASHBOARD ESTADÍSTICAS (Roles específicos)
 // =============================================================================
@@ -706,6 +723,8 @@ Route::prefix('api')->middleware(['auth:sanctum'])->group(function () {
         ]);
     })->name('api.user-permissions');
 });
+
+
 
 // =============================================================================
 // 🔄 RUTAS DE REDIRECCIÓN INTELIGENTE
@@ -895,3 +914,4 @@ Route::middleware(['auth', 'superadmin_only'])->prefix('api/admin')->group(funct
     Route::get('/stats', [RolePermissionController::class, 'apiStats'])->name('api.admin.stats');
     
 });
+

@@ -196,6 +196,16 @@
         transform: scale(1.05);
     }
 
+    module-card[data-module="materials"] .module-icon { 
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+    }
+    
+    .module-card[data-module="materials"] .module-btn { 
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); 
+    }
+
 
     /* ============================================= */
     /* ESTILOS PARA MODO OSCURO */
@@ -506,6 +516,19 @@
                 </a>
             </div>
         </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+    <div class="module-card" data-module="materials">
+        <i class="fas fa-folder-open module-icon"></i>
+        <h5 class="module-title">Almacenamiento de Material</h5>
+        <p class="module-description">Gestión de archivos PDF y enlaces de video organizados por área</p>
+        <a href="{{ route('materials.index') }}" class="module-btn">
+            <i class="fas fa-arrow-right me-2"></i>
+            Gestionar materiales
+        </a>
+    </div>
+</div>
+
     </div>
 
     {{-- Gráfico de ventas --}}

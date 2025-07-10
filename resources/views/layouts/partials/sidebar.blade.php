@@ -447,281 +447,278 @@
         </div>
         
         <div class="sidebar-nav">
-            @auth
-            {{-- DASHBOARD - Todos los roles --}}
-            <div class="nav-section">
-                <div class="nav-section-title">Principal</div>
-                <div class="nav-item">
-                    @php
-                        $dashboardRoute = 'home';
-                        $user = auth()->user();
-                        
-                        if ($user && ($user->hasRole('superadmin') || $user->role === 'superadmin')) {
-                            $dashboardRoute = 'superadmin.dashboard';
-                        } elseif ($user && ($user->hasRole('admin') || $user->role === 'admin')) {
-                            $dashboardRoute = 'admin.dashboard';
-                        } elseif ($user && ($user->hasRole('agente_administrativo') || $user->role === 'agente_administrativo')) {
-                            $dashboardRoute = 'agente_administrativo.dashboard';
-                        } elseif ($user && ($user->hasRole('agente_ventas') || $user->role === 'agente_ventas')) {
-                            $dashboardRoute = 'agente_ventas.dashboard';
-                        } elseif ($user && ($user->hasRole('agente_academico') || $user->role === 'agente_academico')) {
-                            $dashboardRoute = 'agente_academico.dashboard';
-                        } elseif ($user && ($user->hasRole('usuario') || $user->role === 'usuario')) {
-                            $dashboardRoute = 'usuario.dashboard';
-                        }
-                    @endphp
-                    <a href="{{ route($dashboardRoute) }}" class="nav-link active" onclick="hideSidebar()">
-                        <span class="nav-icon">🏠</span>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                </div>
-            </div>
-
-            {{-- REGISTROS - SuperAdmin, Admin, Agente Admin, Agente Ventas (algunos módulos) --}}
-            @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']) || 
-                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo', 'agente_ventas'])))
-                <div class="nav-section">
-                    <div class="nav-section-title">Registros</div>
-                    
-                    {{-- Clientes - SuperAdmin, Admin, Agente Admin, Agente Ventas --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']))
-                        <div class="nav-item">
-                            <a href="{{ route('clientes.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">👥</span>
-                                <span class="nav-text">Clientes</span>
-                            </a>
-                        </div>
-                    @endif
-                    
-                    {{-- Docentes - SuperAdmin, Admin, Agente Académico --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
-                        <div class="nav-item">
-                            <a href="{{ route('docentes.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">👨‍🏫</span>
-                                <span class="nav-text">Docentes</span>
-                            </a>
-                        </div>
-                    @endif
-                    
-                    {{-- Cursos - SuperAdmin, Admin, Agente Académico --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
-                        <div class="nav-item">
-                            <a href="{{ route('cursos.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">📚</span>
-                                <span class="nav-text">Cursos</span>
-                            </a>
-                        </div>
-                    @endif
-                    
-                    {{-- Personal - SuperAdmin, Admin, Agente Admin --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo']))
-                        <div class="nav-item">
-                            <a href="{{ route('personals.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">👤</span>
-                                <span class="nav-text">Personal</span>
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            @endif
-
-            {{-- VENTAS - SuperAdmin, Admin, Agente Ventas --}}
-            @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_ventas']) || 
-                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_ventas'])))
-                <div class="nav-section">
-                    <div class="nav-section-title">Ventas</div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('rventas.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">💼</span>
-                            <span class="nav-text">Gestión de Ventas</span>
-                        </a>
-                    </div>
-                    
-                    {{-- Descuentos - SuperAdmin, Agente Ventas --}}
-                    @if(auth()->user()->hasRole(['superadmin', 'agente_ventas']) || 
-                        in_array(auth()->user()->role, ['superadmin', 'agente_ventas']))
-                        <div class="nav-item">
-                            <a href="{{ route('descuentos.index') }}" class="nav-link" onclick="hideSidebar()">
-                                <span class="nav-icon">🏷️</span>
-                                <span class="nav-text">Descuentos</span>
-                                <span class="nav-badge">Nuevo</span>
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            @endif
-
-            {{-- Entrega de Material - SuperAdmin, Admin, Agente Ventas, Agente Administrativo --}}
-            @canDo('entrega_material', 'view')
-                <div class="nav-section">
-                    <div class="nav-section-title">Logística</div>
-                    <div class="nav-item">
-                        <a href="{{ route('entrega_materials.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Entrega Material</span>
-                        </a>
-                    </div>
-                </div>
-            @endcanDo
-
-            {{-- VENTA CLIENTE - Todos los usuarios autenticados --}}
-            <div class="nav-section">
-                <div class="nav-section-title">Cliente</div>
-                <div class="nav-item">
-                    <a href="{{ route('cliente.panel.superadmin') }}" class="nav-link" onclick="hideSidebar()">
-                        <span class="nav-icon">🛒</span>
-                        <span class="nav-text">Panel de Compras</span>
-                    </a>
-                </div>
-            </div>
-
-            {{-- MÓDULOS ACADÉMICOS - SuperAdmin, Admin, Agente Académico --}}
-            @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
-                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico'])))
-                <div class="nav-section">
-                    <div class="nav-section-title">Académico</div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('certificados.dashboard') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">🎓</span>
-                            <span class="nav-text">Certificados</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('competencias.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">🏆</span>
-                            <span class="nav-text">Competencias</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('certificadosdocentes.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">📑</span>
-                            <span class="nav-text">Cert. Docentes</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('docentes.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">👨‍🏫</span>
-                            <span class="nav-text">Docentes</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('cursos.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">📚</span>
-                            <span class="nav-text">Cursos</span>
-                        </a>
-                    </div>
-                </div>
-            @endif
-
-            {{-- ADMINISTRATIVO - SuperAdmin, Admin, Agente Admin --}}
-            @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo']) || 
-                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo'])))
-                <div class="nav-section">
-                    <div class="nav-section-title">Administrativo</div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('inventario.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Inventario</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('finanzas.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">💰</span>
-                            <span class="nav-text">Finanzas</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('ventas_centralizadas.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">🌐</span>
-                            <span class="nav-text">Ventas Centralizadas</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('controlGeneral.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">🔧</span>
-                            <span class="nav-text">Control General</span>
-                        </a>
-                    </div>
-                </div>
-            @endif
-
-            {{-- ADMINISTRACIÓN - Solo SuperAdmin --}}
-            @if(auth()->user() && (auth()->user()->hasRole('superadmin') || auth()->user()->role === 'superadmin'))
-                <div class="nav-section">
-                    <div class="nav-section-title">Administración</div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('usuarios.index') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Usuarios</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('admin.roles') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">🔐</span>
-                            <span class="nav-text">Roles y Permisos</span>
-                        </a>
-                    </div>
-                    
-                    <div class="nav-item">
-                        <a href="{{ route('dashboard.estadisticas') }}" class="nav-link" onclick="hideSidebar()">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Estadísticas</span>
-                        </a>
-                    </div>
-                </div>
-            @endif
-
-            {{-- CONFIGURACIÓN - Todos --}}
-            <div class="nav-section">
-                <div class="nav-section-title">Sistema</div>
+    @auth
+    {{-- DASHBOARD - Todos los roles --}}
+    <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <div class="nav-item">
+            @php
+                $dashboardRoute = 'home';
+                $user = auth()->user();
                 
-                <div class="nav-item">
-                    <a href="{{ route('smart-redirect') }}" class="nav-link" onclick="hideSidebar()">
-                        <span class="nav-icon">🎯</span>
-                        <span class="nav-text">Ir a Mi Área</span>
-                    </a>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit(); hideSidebar();">
-                        <span class="nav-icon">🚪</span>
-                        <span class="nav-text">Cerrar Sesión</span>
-                    </a>
-                </div>
-                
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            </div>
-            @else
-            {{-- Para usuarios no autenticados --}}
-            <div class="nav-section">
-                <div class="nav-section-title">Acceso</div>
-                <div class="nav-item">
-                    <a href="{{ route('login') }}" class="nav-link" onclick="hideSidebar()">
-                        <span class="nav-icon">🔑</span>
-                        <span class="nav-text">Iniciar Sesión</span>
-                    </a>
-                </div>
-            </div>
-            @endauth
+                if ($user && ($user->hasRole('superadmin') || $user->role === 'superadmin')) {
+                    $dashboardRoute = 'superadmin.dashboard';
+                } elseif ($user && ($user->hasRole('admin') || $user->role === 'admin')) {
+                    $dashboardRoute = 'admin.dashboard';
+                } elseif ($user && ($user->hasRole('agente_administrativo') || $user->role === 'agente_administrativo')) {
+                    $dashboardRoute = 'agente_administrativo.dashboard';
+                } elseif ($user && ($user->hasRole('agente_ventas') || $user->role === 'agente_ventas')) {
+                    $dashboardRoute = 'agente_ventas.dashboard';
+                } elseif ($user && ($user->hasRole('agente_academico') || $user->role === 'agente_academico')) {
+                    $dashboardRoute = 'agente_academico.dashboard';
+                } elseif ($user && ($user->hasRole('usuario') || $user->role === 'usuario')) {
+                    $dashboardRoute = 'usuario.dashboard';
+                }
+            @endphp
+            <a href="{{ route($dashboardRoute) }}" class="nav-link active" onclick="hideSidebar()">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
         </div>
+    </div>
+
+    {{-- REGISTROS - SuperAdmin, Admin, Agente Admin, Agente Ventas (algunos módulos) --}}
+    @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']) || 
+        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo', 'agente_ventas'])))
+        <div class="nav-section">
+            <div class="nav-section-title">Registros</div>
+            
+            {{-- Clientes - SuperAdmin, Admin, Agente Admin, Agente Ventas --}}
+            @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']) || 
+                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo', 'agente_ventas']))
+                <div class="nav-item">
+                    <a href="{{ route('clientes.index') }}" class="nav-link" onclick="hideSidebar()">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Clientes</span>
+                    </a>
+                </div>
+            @endif
+            
+            {{-- Docentes - SuperAdmin, Admin, Agente Académico --}}
+            @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
+                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
+                <div class="nav-item">
+                    <a href="{{ route('docentes.index') }}" class="nav-link" onclick="hideSidebar()">
+                        <span class="nav-icon">👨‍🏫</span>
+                        <span class="nav-text">Docentes</span>
+                    </a>
+                </div>
+            @endif
+            
+            {{-- Cursos - SuperAdmin, Admin, Agente Académico --}}
+            @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
+                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico']))
+                <div class="nav-item">
+                    <a href="{{ route('cursos.index') }}" class="nav-link" onclick="hideSidebar()">
+                        <span class="nav-icon">📚</span>
+                        <span class="nav-text">Cursos</span>
+                    </a>
+                </div>
+            @endif
+            
+            {{-- Personal - SuperAdmin, Admin, Agente Admin --}}
+            @if(auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo']) || 
+                in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo']))
+                <div class="nav-item">
+                    <a href="{{ route('personals.index') }}" class="nav-link" onclick="hideSidebar()">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">Personal</span>
+                    </a>
+                </div>
+            @endif
+        </div>
+    @endif
+
+    {{-- VENTAS - SuperAdmin, Admin, Agente Ventas --}}
+    @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_ventas']) || 
+        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_ventas'])))
+        <div class="nav-section">
+            <div class="nav-section-title">Ventas</div>
+            
+            <div class="nav-item">
+                <a href="{{ route('rventas.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-text">Gestión de Ventas</span>
+                </a>
+            </div>
+            
+            {{-- Descuentos - SuperAdmin, Agente Ventas --}}
+            @if(auth()->user()->hasRole(['superadmin', 'agente_ventas']) || 
+                in_array(auth()->user()->role, ['superadmin', 'agente_ventas']))
+                <div class="nav-item">
+                    <a href="{{ route('descuentos.index') }}" class="nav-link" onclick="hideSidebar()">
+                        <span class="nav-icon">🏷️</span>
+                        <span class="nav-text">Descuentos</span>
+                        <span class="nav-badge">Nuevo</span>
+                    </a>
+                </div>
+            @endif
+        </div>
+    @endif
+
+    {{-- Entrega de Material - SuperAdmin, Admin, Agente Ventas, Agente Administrativo --}}
+    @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_ventas', 'agente_administrativo']) || 
+        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_ventas', 'agente_administrativo'])))
+        <div class="nav-section">
+            <div class="nav-section-title">Logística</div>
+            <div class="nav-item">
+                <a href="{{ route('entrega_materials.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">Entrega Material</span>
+                </a>
+            </div>
+        </div>
+    @endif
+
+    {{-- VENTA CLIENTE - Todos los usuarios autenticados --}}
+    <div class="nav-section">
+        <div class="nav-section-title">Cliente</div>
+        <div class="nav-item">
+            <a href="{{ route('cliente.panel.superadmin') }}" class="nav-link" onclick="hideSidebar()">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-text">Panel de Compras</span>
+            </a>
+        </div>
+    </div>
+
+    {{-- MÓDULOS ACADÉMICOS - SuperAdmin, Admin, Agente Académico --}}
+    @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_academico']) || 
+        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_academico'])))
+        <div class="nav-section">
+            <div class="nav-section-title">Académico</div>
+            
+            <div class="nav-item">
+                <a href="{{ route('certificados.dashboard') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">🎓</span>
+                    <span class="nav-text">Certificados</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('competencias.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-text">Competencias</span>
+                </a>
+            </div>
+            
+            {{-- 📁 NUEVO: Módulo de Materiales --}}
+            <div class="nav-item">
+                <a href="{{ route('materials.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-text">Materiales</span>
+                    <span class="nav-badge">Nuevo</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('certificadosdocentes.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-text">Cert. Docentes</span>
+                </a>
+            </div>
+        </div>
+    @endif
+
+    {{-- ADMINISTRATIVO - SuperAdmin, Admin, Agente Admin --}}
+    @if(auth()->user() && (auth()->user()->hasRole(['superadmin', 'admin', 'agente_administrativo']) || 
+        in_array(auth()->user()->role, ['superadmin', 'admin', 'agente_administrativo'])))
+        <div class="nav-section">
+            <div class="nav-section-title">Administrativo</div>
+            
+            <div class="nav-item">
+                <a href="{{ route('inventario.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">Inventario</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('finanzas.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">Finanzas</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('ventas_centralizadas.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-text">Ventas Centralizadas</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('controlGeneral.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">🔧</span>
+                    <span class="nav-text">Control General</span>
+                </a>
+            </div>
+        </div>
+    @endif
+
+    {{-- ADMINISTRACIÓN - Solo SuperAdmin --}}
+    @if(auth()->user() && (auth()->user()->hasRole('superadmin') || auth()->user()->role === 'superadmin'))
+        <div class="nav-section">
+            <div class="nav-section-title">Administración</div>
+            
+            <div class="nav-item">
+                <a href="{{ route('usuarios.index') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Usuarios</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('admin.roles') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">🔐</span>
+                    <span class="nav-text">Roles y Permisos</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ route('dashboard.estadisticas') }}" class="nav-link" onclick="hideSidebar()">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Estadísticas</span>
+                </a>
+            </div>
+        </div>
+    @endif
+
+    {{-- CONFIGURACIÓN - Todos --}}
+    <div class="nav-section">
+        <div class="nav-section-title">Sistema</div>
+        
+        <div class="nav-item">
+            <a href="{{ route('smart-redirect') }}" class="nav-link" onclick="hideSidebar()">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-text">Ir a Mi Área</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit(); hideSidebar();">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-text">Cerrar Sesión</span>
+            </a>
+        </div>
+        
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
+    </div>
+    @else
+    {{-- Para usuarios no autenticados --}}
+    <div class="nav-section">
+        <div class="nav-section-title">Acceso</div>
+        <div class="nav-item">
+            <a href="{{ route('login') }}" class="nav-link" onclick="hideSidebar()">
+                <span class="nav-icon">🔑</span>
+                <span class="nav-text">Iniciar Sesión</span>
+            </a>
+        </div>
+    </div>
+    @endauth
+</div>
+
     </nav>
 
     
