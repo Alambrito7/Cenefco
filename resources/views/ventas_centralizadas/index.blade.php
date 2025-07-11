@@ -10,7 +10,25 @@
                     <i class="fas fa-chart-line me-2"></i>
                     Ventas Centralizadas por Curso
                 </h2>
+                
+                <!-- Botones de Exportación -->
+                <div class="btn-group" role="group">
+                    <a href="{{ route('ventas_centralizadas.exportar_pdf') }}" 
+                       class="btn btn-danger" 
+                       target="_blank"
+                       title="Exportar a PDF">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Exportar PDF
+                    </a>
 
+                    <button type="button" 
+                            class="btn btn-info" 
+                            onclick="printTable()"
+                            title="Imprimir">
+                        <i class="fas fa-print me-2"></i>
+                        Imprimir
+                    </button>
+                </div>
             </div>
 
             <!-- Statistics Cards -->
@@ -77,7 +95,6 @@
                 </div>
             </div>
 
-            
             <!-- Table Section -->
             <div class="card shadow-sm">
                 <div class="card-body p-0">
@@ -105,6 +122,15 @@
                                         <i class="fas fa-user-tie me-1"></i>
                                         Encargado
                                     </th>
+                                    
+                                    <!-- Columnas dinámicas de bancos -->
+                                    @foreach($bancosUnicos as $banco)
+                                        <th class="text-center banco-column">
+                                            <i class="fas fa-university me-1"></i>
+                                            {{ $banco }}
+                                        </th>
+                                    @endforeach
+                                    
                                     <th class="text-center">
                                         <i class="fas fa-chart-bar me-1"></i>
                                         Total Ventas Curso
@@ -134,6 +160,21 @@
                                         <td class="text-center">
                                             <span class="badge bg-secondary">{{ $item['encargado'] }}</span>
                                         </td>
+                                        
+                                        <!-- Mostrar conteo por banco -->
+                                        @foreach($bancosUnicos as $banco)
+                                            <td class="text-center banco-data">
+                                                @php
+                                                    $count = $item['pagos_por_banco'][$banco] ?? 0;
+                                                @endphp
+                                                @if($count > 0)
+                                                    <span class="badge bg-success">{{ $count }}</span>
+                                                @else
+                                                    <span class="text-muted">0</span>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                        
                                         <td class="text-end fw-bold text-success">
                                             Bs {{ number_format($item['total_ventas_curso'], 2) }}
                                         </td>
@@ -154,6 +195,19 @@
                                     </td>
                                     <td class="text-end">-</td>
                                     <td class="text-center">-</td>
+                                    
+                                    <!-- Totales por banco -->
+                                    @foreach($bancosUnicos as $banco)
+                                        <td class="text-center">
+                                            @php
+                                                $totalBanco = collect($data)->sum(function($item) use ($banco) {
+                                                    return $item['pagos_por_banco'][$banco] ?? 0;
+                                                });
+                                            @endphp
+                                            <span class="badge bg-warning">{{ $totalBanco }}</span>
+                                        </td>
+                                    @endforeach
+                                    
                                     <td class="text-end text-success">
                                         Bs {{ number_format(collect($data)->sum('total_ventas_curso'), 2) }}
                                     </td>
@@ -181,9 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableRows = document.querySelectorAll('.table-row');
 
     function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const empresaValue = empresaFilter.value;
-        const encargadoValue = encargadoFilter.value;
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const empresaValue = empresaFilter ? empresaFilter.value : '';
+        const encargadoValue = encargadoFilter ? encargadoFilter.value : '';
 
         tableRows.forEach(row => {
             const empresa = row.dataset.empresa;
@@ -202,13 +256,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    searchInput.addEventListener('input', filterTable);
-    empresaFilter.addEventListener('change', filterTable);
-    encargadoFilter.addEventListener('change', filterTable);
+    if (searchInput) searchInput.addEventListener('input', filterTable);
+    if (empresaFilter) empresaFilter.addEventListener('change', filterTable);
+    if (encargadoFilter) encargadoFilter.addEventListener('change', filterTable);
 });
 
 function exportToExcel() {
-    // Implementar exportación a Excel
     console.log('Exportando a Excel...');
 }
 
@@ -244,6 +297,16 @@ function printTable() {
     padding: 1.5rem;
 }
 
+/* Estilos para las columnas de bancos */
+.banco-column {
+    background-color: rgba(13, 110, 253, 0.1);
+    min-width: 100px;
+}
+
+.banco-data {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
 @media print {
     .btn, .card:first-child {
         display: none !important;
@@ -252,6 +315,14 @@ function printTable() {
     .container-fluid {
         margin: 0;
         padding: 0;
+    }
+}
+
+/* Responsive para muchas columnas */
+@media (max-width: 1200px) {
+    .banco-column, .banco-data {
+        min-width: 80px;
+        font-size: 0.85em;
     }
 }
 </style>

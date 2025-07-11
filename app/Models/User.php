@@ -12,6 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
+use Illuminate\Support\Facades\Storage; //
 
 
 class User extends Authenticatable
@@ -22,7 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Mantener temporalmente para compatibilidad
+        'avatar',
+        'last_login_at',
     ];
 
     protected $hidden = [
@@ -30,10 +32,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     // Relaciones NUEVAS
     public function roles()
@@ -224,4 +230,52 @@ class User extends Authenticatable
             $q->where('permissions.name', $permission);
         });
     }
+
+   public function getAvatarUrlAttribute()
+   {
+       if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+           return Storage::disk('public')->url($this->avatar);
+       }
+       return null;
+   }
+
+   /**
+    * Verificar si tiene avatar
+    */
+   public function hasAvatar()
+   {
+       return !empty($this->avatar) && Storage::disk('public')->exists($this->avatar);
+   }
+
+   /**
+    * Obtener URL del avatar o placeholder
+    */
+   public function getAvatarOrPlaceholder()
+   {
+       if ($this->hasAvatar()) {
+           return $this->avatar_url;
+       }
+       
+       // Generar avatar con iniciales usando un servicio externo
+       $initials = $this->getInitials();
+       return "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&background=0d6efd&color=ffffff&size=200&font-size=0.6";
+   }
+
+   /**
+    * Obtener iniciales del nombre
+    */
+   public function getInitials()
+   {
+       $words = explode(' ', trim($this->name));
+       $initials = '';
+       
+       foreach ($words as $word) {
+           if (strlen($word) > 0) {
+               $initials .= strtoupper($word[0]);
+           }
+           if (strlen($initials) >= 2) break;
+       }
+       
+       return $initials ?: 'U';
+   }
 }

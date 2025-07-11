@@ -1,4 +1,4 @@
-{{-- resources/views/modulos/materials/create.blade.php - VERSIÓN CORREGIDA --}}
+{{-- resources/views/modulos/materials/create.blade.php - VERSIÓN MULTI-ARCHIVO --}}
 
 @extends('layouts.app')
 
@@ -10,7 +10,7 @@
             <h1 class="display-6 fw-bold text-primary mb-2">
                 <i class="fas fa-plus-circle me-2"></i>Nuevo Material
             </h1>
-            <p class="text-muted">Agregar nuevo archivo PDF o enlace de video</p>
+            <p class="text-muted">Agregar nuevo archivo o enlace de video</p>
         </div>
 
         <!-- Breadcrumb -->
@@ -43,7 +43,7 @@
 
         <!-- Formulario -->
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div class="card shadow-lg">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
@@ -81,12 +81,15 @@
                                     </label>
                                     <select name="type" id="type" class="form-select @error('type') is-invalid @enderror" required>
                                         <option value="">Seleccionar tipo...</option>
-                                        <option value="pdf" {{ old('type') == 'pdf' ? 'selected' : '' }}>
-                                            📄 Archivo PDF
-                                        </option>
-                                        <option value="video" {{ old('type') == 'video' ? 'selected' : '' }}>
-                                            🎥 Enlace de Video
-                                        </option>
+                                        @foreach($fileTypes as $key => $config)
+                                            <option value="{{ $key }}" 
+                                                    data-extensions="{{ implode(',', $config['extensions']) }}"
+                                                    data-max-size="{{ $config['max_size'] }}"
+                                                    data-accept="{{ $config['accept'] }}"
+                                                    {{ old('type') == $key ? 'selected' : '' }}>
+                                                {{ $config['label'] }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     @error('type')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -109,35 +112,46 @@
                                 @enderror
                                 <div class="form-text">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Proporciona una descripción clara y detallada del material.
+                                    Proporciona una descripción clara y detallada del material (mínimo 10 caracteres).
                                 </div>
                             </div>
 
-                            <!-- Archivo PDF (solo visible cuando type = pdf) -->
-                            <div class="mb-4" id="pdfSection" style="display: none;">
+                            <!-- Archivo (visible para todos los tipos excepto video) -->
+                            <div class="mb-4" id="fileSection" style="display: none;">
                                 <label for="file" class="form-label fw-bold">
-                                    <i class="fas fa-file-pdf me-1 text-danger"></i>Archivo PDF
+                                    <i class="fas fa-file me-1" id="fileIcon"></i>
+                                    <span id="fileLabel">Archivo</span>
                                     <span class="text-danger">*</span>
                                 </label>
+                                
                                 <input type="file" name="file" id="file" 
-                                       class="form-control @error('file') is-invalid @enderror" 
-                                       accept=".pdf">
+                                       class="form-control @error('file') is-invalid @enderror">
                                 @error('file')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">
-                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                    Solo archivos PDF. Tamaño máximo: 10MB.
+                                
+                                <div class="form-text" id="fileHelp">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <span id="fileHelpText">Selecciona un archivo válido.</span>
                                 </div>
                                 
                                 <!-- Preview del archivo -->
                                 <div id="filePreview" class="mt-3" style="display: none;">
                                     <div class="alert alert-info">
-                                        <i class="fas fa-file-pdf me-2"></i>
-                                        <strong>Archivo seleccionado:</strong>
-                                        <span id="fileName"></span>
-                                        <br>
-                                        <small id="fileSize"></small>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file fa-2x me-3" id="previewIcon"></i>
+                                            <div>
+                                                <strong>Archivo seleccionado:</strong>
+                                                <span id="fileName"></span>
+                                                <br>
+                                                <small id="fileSize" class="text-muted"></small>
+                                                <span id="fileMimeType" class="badge bg-secondary ms-2"></span>
+                                            </div>
+                                        </div>
+                                        <!-- Preview especial para imágenes -->
+                                        <div id="imagePreview" class="mt-3" style="display: none;">
+                                            <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +165,7 @@
                                 <input type="url" name="video_url" id="video_url" 
                                        class="form-control @error('video_url') is-invalid @enderror" 
                                        value="{{ old('video_url') }}"
-                                       placeholder="https://www.youtube.com/watch?v=...">
+                                       placeholder="https://www.youtube.com/watch?v=... o https://vimeo.com/...">
                                 @error('video_url')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -166,6 +180,27 @@
                                         <i class="fas fa-video me-2"></i>
                                         <strong>Video detectado:</strong>
                                         <a href="#" id="videoLink" target="_blank" class="alert-link">Ver video</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de límites según tipo -->
+                            <div class="mb-4" id="typeInfo" style="display: none;">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary mb-3">
+                                            <i class="fas fa-info-circle me-1"></i>Información del Tipo Seleccionado
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <strong>Extensiones permitidas:</strong>
+                                                <div id="allowedExtensions" class="mt-1"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Tamaño máximo:</strong>
+                                                <div id="maxFileSize" class="mt-1"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -199,19 +234,66 @@
     </div>
 </div>
 
-<!-- Scripts mejorados -->
+<!-- Scripts mejorados para múltiples tipos de archivo -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔧 Iniciando JavaScript del formulario de materiales...');
+    console.log('🔧 Iniciando JavaScript del formulario multi-archivo...');
     
     const typeSelect = document.getElementById('type');
-    const pdfSection = document.getElementById('pdfSection');
+    const fileSection = document.getElementById('fileSection');
     const videoSection = document.getElementById('videoSection');
+    const typeInfo = document.getElementById('typeInfo');
     const fileInput = document.getElementById('file');
     const videoUrlInput = document.getElementById('video_url');
     const submitBtn = document.getElementById('submitBtn');
     const debugInfo = document.getElementById('debugInfo');
     const form = document.getElementById('materialForm');
+
+    // Configuración de tipos de archivo
+    const fileTypeConfigs = {
+        pdf: {
+            icon: 'fas fa-file-pdf',
+            color: 'danger',
+            label: 'Archivo PDF',
+            extensions: ['pdf'],
+            maxSize: 10240
+        },
+        image: {
+            icon: 'fas fa-image',
+            color: 'success',
+            label: 'Imagen',
+            extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
+            maxSize: 5120
+        },
+        document: {
+            icon: 'fas fa-file-word',
+            color: 'primary',
+            label: 'Documento Word',
+            extensions: ['doc', 'docx'],
+            maxSize: 15360
+        },
+        executable: {
+            icon: 'fas fa-cog',
+            color: 'warning',
+            label: 'Programa/Ejecutable',
+            extensions: ['exe', 'msi'],
+            maxSize: 512000
+        },
+        compressed: {
+            icon: 'fas fa-file-archive',
+            color: 'info',
+            label: 'Archivo Comprimido',
+            extensions: ['zip', 'rar', '7z', 'tar', 'gz'],
+            maxSize: 102400
+        },
+        video: {
+            icon: 'fas fa-video',
+            color: 'secondary',
+            label: 'Video (URL)',
+            extensions: [],
+            maxSize: 0
+        }
+    };
 
     // Función para actualizar debug info
     function updateDebug(message) {
@@ -219,17 +301,49 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('📋 Debug:', message);
     }
 
-    // Función para limpiar y resetear campos
+    // Función para resetear campos
     function resetFields() {
-        // Limpiar archivo
         fileInput.value = '';
         fileInput.removeAttribute('required');
         document.getElementById('filePreview').style.display = 'none';
+        document.getElementById('imagePreview').style.display = 'none';
         
-        // Limpiar video URL
         videoUrlInput.value = '';
         videoUrlInput.removeAttribute('required');
         document.getElementById('videoPreview').style.display = 'none';
+    }
+
+    // Función para actualizar la interfaz según el tipo
+    function updateTypeInterface(selectedType) {
+        const config = fileTypeConfigs[selectedType];
+        if (!config) return;
+
+        // Actualizar iconos y etiquetas
+        const fileIcon = document.getElementById('fileIcon');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileHelpText = document.getElementById('fileHelpText');
+        
+        fileIcon.className = config.icon + ' me-1 text-' + config.color;
+        fileLabel.textContent = config.label;
+        
+        // Actualizar información del tipo
+        if (selectedType !== 'video') {
+            const extensions = config.extensions.join(', ').toUpperCase();
+            const maxSizeMB = Math.round(config.maxSize / 1024);
+            
+            fileHelpText.textContent = `Archivos permitidos: ${extensions}. Tamaño máximo: ${maxSizeMB}MB.`;
+            fileInput.accept = '.' + config.extensions.join(',.');
+            
+            // Mostrar información detallada
+            document.getElementById('allowedExtensions').innerHTML = 
+                config.extensions.map(ext => `<span class="badge bg-${config.color} me-1">.${ext}</span>`).join('');
+            document.getElementById('maxFileSize').innerHTML = 
+                `<span class="badge bg-secondary">${maxSizeMB}MB</span>`;
+            
+            typeInfo.style.display = 'block';
+        } else {
+            typeInfo.style.display = 'none';
+        }
     }
 
     // Mostrar/ocultar secciones según el tipo
@@ -237,39 +351,67 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedType = this.value;
         updateDebug(`Tipo seleccionado: ${selectedType}`);
         
-        // Primero ocultar todo y limpiar
-        pdfSection.style.display = 'none';
+        // Resetear campos
+        fileSection.style.display = 'none';
         videoSection.style.display = 'none';
+        typeInfo.style.display = 'none';
         resetFields();
         
-        if (selectedType === 'pdf') {
-            pdfSection.style.display = 'block';
-            fileInput.setAttribute('required', 'required');
-            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar PDF';
-            updateDebug('Modo PDF activado - Archivo requerido');
-        } else if (selectedType === 'video') {
+        if (selectedType === 'video') {
             videoSection.style.display = 'block';
             videoUrlInput.setAttribute('required', 'required');
             submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Video';
             updateDebug('Modo Video activado - URL requerida');
+        } else if (selectedType) {
+            fileSection.style.display = 'block';
+            fileInput.setAttribute('required', 'required');
+            updateTypeInterface(selectedType);
+            submitBtn.innerHTML = `<i class="fas fa-save me-2"></i>Guardar ${fileTypeConfigs[selectedType].label}`;
+            updateDebug(`Modo ${fileTypeConfigs[selectedType].label} activado - Archivo requerido`);
         } else {
             submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Material';
             updateDebug('Esperando selección de tipo');
         }
     });
 
-    // Preview del archivo PDF
+    // Preview del archivo
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
         const filePreview = document.getElementById('filePreview');
+        const imagePreview = document.getElementById('imagePreview');
         
         if (file) {
+            // Información básica del archivo
             document.getElementById('fileName').textContent = file.name;
             document.getElementById('fileSize').textContent = `Tamaño: ${formatFileSize(file.size)}`;
+            document.getElementById('fileMimeType').textContent = file.type;
+            
+            // Icono según el tipo
+            const previewIcon = document.getElementById('previewIcon');
+            const selectedType = typeSelect.value;
+            const config = fileTypeConfigs[selectedType];
+            if (config) {
+                previewIcon.className = config.icon + ' fa-2x me-3 text-' + config.color;
+            }
+            
             filePreview.style.display = 'block';
+            
+            // Preview especial para imágenes
+            if (selectedType === 'image' && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+            
             updateDebug(`Archivo seleccionado: ${file.name} (${formatFileSize(file.size)})`);
         } else {
             filePreview.style.display = 'none';
+            imagePreview.style.display = 'none';
             updateDebug('Sin archivo seleccionado');
         }
     });
@@ -295,12 +437,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // VALIDACIÓN CRÍTICA DEL FORMULARIO
+    // Validación del formulario
     form.addEventListener('submit', function(e) {
         const type = typeSelect.value;
         updateDebug('Intentando enviar formulario...');
         
-        // Validación básica
         if (!type) {
             e.preventDefault();
             alert('Por favor, selecciona un tipo de material.');
@@ -308,21 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // CRUCIAL: Limpiar el campo que no corresponde al tipo seleccionado
-        if (type === 'pdf') {
-            // Limpiar URL de video para evitar conflictos
-            videoUrlInput.value = '';
-            videoUrlInput.removeAttribute('name');
-            
-            if (!fileInput.files[0]) {
-                e.preventDefault();
-                alert('Por favor, selecciona un archivo PDF.');
-                updateDebug('❌ Error: Archivo PDF no seleccionado');
-                return false;
-            }
-        } else if (type === 'video') {
-            // Limpiar archivo para evitar conflictos
-            fileInput.value = '';
+        // Limpiar campos conflictivos
+        if (type === 'video') {
             fileInput.removeAttribute('name');
             
             if (!videoUrlInput.value.trim()) {
@@ -336,6 +464,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 alert('Por favor, ingresa una URL válida.');
                 updateDebug('❌ Error: URL de video inválida');
+                return false;
+            }
+        } else {
+            videoUrlInput.removeAttribute('name');
+            
+            if (!fileInput.files[0]) {
+                e.preventDefault();
+                alert('Por favor, selecciona un archivo.');
+                updateDebug('❌ Error: Archivo no seleccionado');
+                return false;
+            }
+            
+            // Validar extensión
+            const file = fileInput.files[0];
+            const config = fileTypeConfigs[type];
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            if (!config.extensions.includes(extension)) {
+                e.preventDefault();
+                alert(`El archivo debe ser de tipo: ${config.extensions.join(', ')}`);
+                updateDebug('❌ Error: Extensión no válida');
+                return false;
+            }
+            
+            // Validar tamaño
+            const fileSizeKB = file.size / 1024;
+            if (fileSizeKB > config.maxSize) {
+                e.preventDefault();
+                alert(`El archivo no debe exceder ${Math.round(config.maxSize / 1024)}MB`);
+                updateDebug('❌ Error: Archivo muy grande');
                 return false;
             }
         }
@@ -366,15 +524,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Inicializar si hay valor previo (en caso de errores de validación)
+    // Inicializar si hay valor previo
     if (typeSelect.value) {
         typeSelect.dispatchEvent(new Event('change'));
         updateDebug(`Inicializado con tipo: ${typeSelect.value}`);
     } else {
-        updateDebug('Formulario inicializado correctamente');
+        updateDebug('Formulario multi-archivo inicializado correctamente');
     }
     
-    console.log('✅ JavaScript del formulario cargado correctamente');
+    console.log('✅ JavaScript del formulario multi-archivo cargado correctamente');
 });
 </script>
 
@@ -422,13 +580,25 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 /* Animaciones */
-#pdfSection,
-#videoSection {
+#fileSection,
+#videoSection,
+#typeInfo {
     transition: all 0.3s ease;
 }
 
 .btn:disabled {
     opacity: 0.6;
+}
+
+/* Preview de imagen */
+.img-thumbnail {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+}
+
+/* Badges para extensiones */
+.badge {
+    font-size: 0.75em;
 }
 </style>
 @endsection

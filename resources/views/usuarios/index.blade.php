@@ -360,8 +360,8 @@
                                 <th><i class="fas fa-user me-1"></i>Nombre</th>
                                 <th><i class="fas fa-envelope me-1"></i>Correo</th>
                                 <th><i class="fas fa-shield-alt me-1"></i>Rol Actual</th>
-                                <th><i class="fas fa-user-tag me-1"></i>Asignar Rol</th>
-                                <th><i class="fas fa-cogs me-1"></i>Módulos</th>
+                                
+                             
                                 <th><i class="fas fa-circle me-1"></i>Estado</th>
                                 <th><i class="fas fa-tools me-1"></i>Acciones</th>
                             </tr>
@@ -387,29 +387,8 @@
                                             {{ $usuario->role ?? 'Sin rol' }}
                                         </span>
                                     </td>
-                                    <td>
-                                        <form method="POST" action="{{ route('usuarios.rol', $usuario->id) }}" class="form-inline-modern">
-                                            @csrf
-                                            @method('PUT')
-                                            <select name="rol" class="select-modern" required>
-                                                <option value="">Seleccionar</option>
-                                                <option value="superadmin" {{ $usuario->role == 'superadmin' ? 'selected' : '' }}>SuperAdmin</option>
-                                                <option value="admin" {{ $usuario->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                                <option value="agente" {{ $usuario->role == 'agente' ? 'selected' : '' }}>Agente</option>
-                                                <option value="usuario" {{ $usuario->role == 'usuario' ? 'selected' : '' }}>Usuario</option>
-                                            </select>
-                                            <button type="submit" class="btn-modern btn-success-modern">
-                                                <i class="fas fa-check"></i>
-                                                Asignar
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('usuarios.modulos', $usuario->id) }}" class="btn-modern btn-info-modern">
-                                            <i class="fas fa-cogs"></i>
-                                            Módulos
-                                        </a>
-                                    </td>
+                                   
+                                    
                                     <td>
                                         <span class="badge-modern badge-activo">
                                             <i class="fas fa-circle me-1"></i>

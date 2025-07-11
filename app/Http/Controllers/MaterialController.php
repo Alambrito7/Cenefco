@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class MaterialController extends Controller
 {
@@ -19,10 +19,14 @@ class MaterialController extends Controller
         $materials = Material::orderBy('created_at', 'desc')->get();
         $materialsDeleted = Material::onlyTrashed()->orderBy('deleted_at', 'desc')->get();
         
-        // Estadísticas
+        // Estadísticas por tipo
         $stats = [
             'total' => Material::count(),
             'pdfs' => Material::ofType('pdf')->count(),
+            'images' => Material::ofType('image')->count(),
+            'documents' => Material::ofType('document')->count(),
+            'executables' => Material::ofType('executable')->count(),
+            'compressed' => Material::ofType('compressed')->count(),
             'videos' => Material::ofType('video')->count(),
             'deleted' => Material::onlyTrashed()->count(),
         ];
@@ -36,7 +40,9 @@ class MaterialController extends Controller
     public function create()
     {
         $areas = Material::getAvailableAreas();
-        return view('modulos.materials.create', compact('areas'));
+        $fileTypes = Material::getFileTypeOptions();
+        
+        return view('modulos.materials.create', compact('areas', 'fileTypes'));
     }
 
     /**
@@ -44,33 +50,82 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        // Limpiar campos conflictivos según el tipo
+        if ($request->type === 'video') {
+            $request->offsetUnset('file');
+        } else {
+            $request->merge(['video_url' => null]);
+        }
+
+        // Validación dinámica según el tipo
+        $rules = [
             'rama' => 'required|string|max:255',
-            'type' => 'required|in:pdf,video',
-            'description' => 'required|string',
-            'file' => 'required_if:type,pdf|file|mimes:pdf|max:10240', // 10MB max
-            'video_url' => 'required_if:type,video|url',
-        ], [
+            'type' => ['required', Rule::in(array_keys(Material::FILE_TYPES))],
+            'description' => 'required|string|min:10',
+        ];
+
+        $messages = [
             'rama.required' => 'La rama/área es obligatoria',
             'type.required' => 'El tipo de material es obligatorio',
+            'type.in' => 'El tipo de material seleccionado no es válido',
             'description.required' => 'La descripción es obligatoria',
-            'file.required_if' => 'El archivo PDF es obligatorio cuando el tipo es PDF',
-            'file.mimes' => 'El archivo debe ser un PDF',
-            'file.max' => 'El archivo no debe exceder 10MB',
-            'video_url.required_if' => 'La URL del video es obligatoria cuando el tipo es video',
-            'video_url.url' => 'La URL del video debe ser válida',
-        ]);
+            'description.min' => 'La descripción debe tener al menos 10 caracteres',
+        ];
+
+        if ($request->type === 'video') {
+            $rules['video_url'] = 'required|url';
+            $messages['video_url.required'] = 'La URL del video es obligatoria';
+            $messages['video_url.url'] = 'La URL del video debe ser válida';
+        } else {
+            $typeConfig = Material::FILE_TYPES[$request->type];
+            $maxSize = $typeConfig['max_size'];
+            $extensions = implode(',', $typeConfig['extensions']);
+            
+            $rules['file'] = [
+                'required',
+                'file',
+                'mimes:' . $extensions,
+                'max:' . $maxSize
+            ];
+            
+            $messages['file.required'] = 'El archivo es obligatorio';
+            $messages['file.mimes'] = 'El archivo debe ser de tipo: ' . $extensions;
+            $messages['file.max'] = 'El archivo no debe exceder ' . ($maxSize / 1024) . 'MB';
+        }
+
+        $request->validate($rules, $messages);
 
         $data = $request->only(['rama', 'type', 'description']);
 
-        if ($request->type === 'pdf' && $request->hasFile('file')) {
-            // Guardar archivo PDF
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('materials/pdfs', $fileName, 'public');
-            $data['file_path'] = $filePath;
-        } elseif ($request->type === 'video') {
+        if ($request->type === 'video') {
             $data['video_url'] = $request->video_url;
+        } else {
+            // Procesar archivo
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                
+                // Validación adicional personalizada
+                $validation = Material::validateFile($file, $request->type);
+                if ($validation !== true) {
+                    return back()->withErrors(['file' => $validation])->withInput();
+                }
+
+                // Generar nombre único
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $nameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+                $fileName = time() . '_' . $nameWithoutExt . '.' . $extension;
+                
+                // Determinar directorio según tipo
+                $directory = 'materials/' . $request->type . 's';
+                $filePath = $file->storeAs($directory, $fileName, 'public');
+                
+                // Guardar información del archivo
+                $data['file_path'] = $filePath;
+                $data['file_name'] = $originalName;
+                $data['file_size'] = $file->getSize();
+                $data['mime_type'] = $file->getMimeType();
+            }
         }
 
         Material::create($data);
@@ -93,7 +148,9 @@ class MaterialController extends Controller
     public function edit(Material $material)
     {
         $areas = Material::getAvailableAreas();
-        return view('modulos.materials.edit', compact('material', 'areas'));
+        $fileTypes = Material::getFileTypeOptions();
+        
+        return view('modulos.materials.edit', compact('material', 'areas', 'fileTypes'));
     }
 
     /**
@@ -101,50 +158,99 @@ class MaterialController extends Controller
      */
     public function update(Request $request, Material $material)
     {
-        $request->validate([
+        // Limpiar campos conflictivos según el tipo
+        if ($request->type === 'video') {
+            $request->offsetUnset('file');
+        } else {
+            $request->merge(['video_url' => null]);
+        }
+
+        // Validación dinámica
+        $rules = [
             'rama' => 'required|string|max:255',
-            'type' => 'required|in:pdf,video',
-            'description' => 'required|string',
-            'file' => 'nullable|file|mimes:pdf|max:10240',
-            'video_url' => 'required_if:type,video|url',
-        ], [
+            'type' => ['required', Rule::in(array_keys(Material::FILE_TYPES))],
+            'description' => 'required|string|min:10',
+        ];
+
+        $messages = [
             'rama.required' => 'La rama/área es obligatoria',
             'type.required' => 'El tipo de material es obligatorio',
             'description.required' => 'La descripción es obligatoria',
-            'file.mimes' => 'El archivo debe ser un PDF',
-            'file.max' => 'El archivo no debe exceder 10MB',
-            'video_url.required_if' => 'La URL del video es obligatoria cuando el tipo es video',
-            'video_url.url' => 'La URL del video debe ser válida',
-        ]);
+            'description.min' => 'La descripción debe tener al menos 10 caracteres',
+        ];
+
+        if ($request->type === 'video') {
+            $rules['video_url'] = 'required|url';
+            $messages['video_url.required'] = 'La URL del video es obligatoria';
+            $messages['video_url.url'] = 'La URL del video debe ser válida';
+        } else {
+            $typeConfig = Material::FILE_TYPES[$request->type];
+            $maxSize = $typeConfig['max_size'];
+            $extensions = implode(',', $typeConfig['extensions']);
+            
+            $rules['file'] = [
+                'nullable',
+                'file',
+                'mimes:' . $extensions,
+                'max:' . $maxSize
+            ];
+            
+            $messages['file.mimes'] = 'El archivo debe ser de tipo: ' . $extensions;
+            $messages['file.max'] = 'El archivo no debe exceder ' . ($maxSize / 1024) . 'MB';
+        }
+
+        $request->validate($rules, $messages);
 
         $data = $request->only(['rama', 'type', 'description']);
 
         // Si cambió el tipo, limpiar campos del tipo anterior
         if ($material->type !== $request->type) {
-            if ($request->type === 'pdf') {
-                $data['video_url'] = null;
-            } else {
-                // Si cambió a video, eliminar archivo PDF anterior
+            if ($request->type === 'video') {
+                // Cambió a video, eliminar archivo anterior
                 if ($material->file_path) {
                     Storage::disk('public')->delete($material->file_path);
                 }
                 $data['file_path'] = null;
+                $data['file_name'] = null;
+                $data['file_size'] = null;
+                $data['mime_type'] = null;
+            } else {
+                // Cambió a archivo, limpiar URL
+                $data['video_url'] = null;
             }
         }
 
-        if ($request->type === 'pdf' && $request->hasFile('file')) {
-            // Eliminar archivo anterior si existe
-            if ($material->file_path) {
-                Storage::disk('public')->delete($material->file_path);
-            }
-            
-            // Guardar nuevo archivo
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('materials/pdfs', $fileName, 'public');
-            $data['file_path'] = $filePath;
-        } elseif ($request->type === 'video') {
+        if ($request->type === 'video') {
             $data['video_url'] = $request->video_url;
+        } else {
+            // Procesar archivo si se subió uno nuevo
+            if ($request->hasFile('file')) {
+                // Validación personalizada
+                $validation = Material::validateFile($request->file('file'), $request->type);
+                if ($validation !== true) {
+                    return back()->withErrors(['file' => $validation])->withInput();
+                }
+
+                // Eliminar archivo anterior si existe
+                if ($material->file_path) {
+                    Storage::disk('public')->delete($material->file_path);
+                }
+                
+                // Guardar nuevo archivo
+                $file = $request->file('file');
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $nameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+                $fileName = time() . '_' . $nameWithoutExt . '.' . $extension;
+                
+                $directory = 'materials/' . $request->type . 's';
+                $filePath = $file->storeAs($directory, $fileName, 'public');
+                
+                $data['file_path'] = $filePath;
+                $data['file_name'] = $originalName;
+                $data['file_size'] = $file->getSize();
+                $data['mime_type'] = $file->getMimeType();
+            }
         }
 
         $material->update($data);
@@ -199,7 +305,7 @@ class MaterialController extends Controller
      */
     public function download(Material $material)
     {
-        if (!$material->isPdf() || !$material->file_path) {
+        if ($material->isVideo() || !$material->file_path) {
             abort(404);
         }
 
@@ -213,6 +319,24 @@ class MaterialController extends Controller
     }
 
     /**
+     * Preview file (for images)
+     */
+    public function preview(Material $material)
+    {
+        if (!$material->isImage() || !$material->file_path) {
+            abort(404);
+        }
+
+        $filePath = storage_path('app/public/' . $material->file_path);
+        
+        if (!file_exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->file($filePath);
+    }
+
+    /**
      * Get materials by area (AJAX)
      */
     public function getByArea(Request $request)
@@ -221,6 +345,14 @@ class MaterialController extends Controller
         $materials = Material::ofArea($area)->get();
         
         return response()->json($materials);
+    }
+
+    /**
+     * Get file types (AJAX)
+     */
+    public function getFileTypes()
+    {
+        return response()->json(Material::getFileTypeOptions());
     }
 
     /**

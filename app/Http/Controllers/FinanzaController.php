@@ -80,7 +80,7 @@ class FinanzaController extends Controller
             'venta_id' => 'required|exists:ventas,id',
             'curso_id' => 'required|exists:cursos,id',
             'monto' => 'required|numeric|min:0.01',
-            'banco' => 'required|in:BCP,Tigo Money,B U,Recibo,WesterUnion',
+            'banco' => 'required|in:BCP,Tigo Money,Banco Union,Recibo,WesterUnion',
             'nro_transaccion' => 'required|unique:finanzas,nro_transaccion',
             'fecha_hora' => 'required|date',
         ]);
@@ -116,7 +116,7 @@ class FinanzaController extends Controller
             'venta_id' => 'required|exists:ventas,id',
             'curso_id' => 'required|exists:cursos,id',
             'monto' => 'required|numeric|min:0.01',
-            'banco' => 'required|in:BCP,Tigo Money,B U,Recibo,WesterUnion',
+            'banco' => 'required|in:BCP,Tigo Money,Banco Union,Recibo,WesterUnion',
             'nro_transaccion' => 'required|unique:finanzas,nro_transaccion,' . $finanza->id,
             'fecha_hora' => 'required|date',
         ]);

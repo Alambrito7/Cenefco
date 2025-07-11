@@ -4,14 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap 5 CSS - UNA SOLA VERSIÓN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap 5.3.0 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -173,17 +176,102 @@
             visibility: visible;
         }
 
+        .navbar-nav .dropdown-toggle {
+            border: none;
+            background: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+        }
+
+        .navbar-nav .dropdown-toggle:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav .dropdown-toggle:focus {
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        /* Estilos para el dropdown con avatar */
+        .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .dropdown-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid var(--sidebar-border);
+            margin-bottom: 0;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.25rem;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #dc2626 !important;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Avatar específico en navbar */
+        .navbar .rounded-circle {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .navbar-nav .dropdown-toggle:hover .rounded-circle {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animación suave para el dropdown */
+        .dropdown-menu {
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar-toggle {
-                top: 15px;
-                left: 15px;
-                padding: 0.6rem;
+            .dropdown-menu {
+                min-width: 200px;
             }
-
-            .main-content {
-                margin: 0.5rem;
-                padding: 1rem;
+            
+            .dropdown-item {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .navbar-nav .dropdown-toggle {
+                padding: 0.4rem 0.8rem;
             }
         }
 
@@ -211,10 +299,26 @@
         <!-- Navbar mejorado -->
         <nav class="navbar navbar-expand-md navbar-light navbar-custom">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <i class="fas fa-graduation-cap me-2"></i>
-                    {{ config('app.name', 'CENEFCO') }}
-                </a>
+                @php
+    $homeRoute = '/';
+    if (Auth::check()) {
+        $user = Auth::user();
+        $homeRoute = match($user->role) {
+            'superadmin' => route('superadmin.dashboard'),
+            'admin' => route('admin.dashboard'),
+            'agente_academico' => route('agente_academico.dashboard'),
+            'agente_administrativo' => route('agente_administrativo.dashboard'),
+            'agente_ventas' => route('agente_ventas.dashboard'),
+            'usuario' => route('usuario.dashboard'),
+            default => route('usuario.dashboard'),
+        };
+    }
+@endphp
+
+<a class="navbar-brand" href="{{ $homeRoute }}">
+    <i class="fas fa-graduation-cap me-2"></i>
+    {{ config('app.name', 'CENEFCO') }}
+</a>
                 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -226,54 +330,86 @@
                     <ul class="navbar-nav me-auto"></ul>
 
                     <!-- Right Side -->
-                    <ul class="navbar-nav ms-auto">
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">
-                                        <i class="fas fa-sign-in-alt me-1"></i>
-                                        {{ __('Login') }}
-                                    </a>
-                                </li>
-                            @endif
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">
-                                        <i class="fas fa-user-plus me-1"></i>
-                                        {{ __('Register') }}
-                                    </a>
-                                </li>
-                            @endif
+<!-- REEMPLAZA la sección del dropdown en tu layouts/app.blade.php -->
+
+<!-- Right Side del Navbar con Avatar -->
+<ul class="navbar-nav ms-auto">
+    @guest
+        @if (Route::has('login'))
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('login') }}">
+                    <i class="fas fa-sign-in-alt me-1"></i>
+                    {{ __('Login') }}
+                </a>
+            </li>
+        @endif
+        @if (Route::has('register'))
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('register') }}">
+                    <i class="fas fa-user-plus me-1"></i>
+                    {{ __('Register') }}
+                </a>
+            </li>
+        @endif
+    @else
+        <li class="nav-item dropdown">
+            <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                <!-- Avatar del usuario -->
+                <div class="me-2">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                             alt="Avatar de {{ Auth::user()->name }}" 
+                             class="rounded-circle border border-2 border-primary" 
+                             style="width: 32px; height: 32px; object-fit: cover;"
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=64';">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=64" 
+                             alt="Avatar de {{ Auth::user()->name }}" 
+                             class="rounded-circle border border-2 border-primary" 
+                             style="width: 32px; height: 32px; object-fit: cover;">
+                    @endif
+                </div>
+                <span class="fw-medium">{{ Auth::user()->name }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <!-- Header del dropdown con avatar más grande -->
+                <div class="dropdown-header text-center py-3">
+                    <div class="mb-2">
+                        @if(Auth::user()->avatar)
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 alt="Avatar de {{ Auth::user()->name }}" 
+                                 class="rounded-circle border border-3 border-primary" 
+                                 style="width: 48px; height: 48px; object-fit: cover;"
+                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=96';">
                         @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <i class="fas fa-user-circle me-2"></i>
-                                    {{ Auth::user()->name }}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <h6 class="dropdown-header">
-                                        <i class="fas fa-user me-2"></i>
-                                        {{ Auth::user()->name }}
-                                    </h6>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#" onclick="showUserProfile()">
-                                        <i class="fas fa-user-cog me-2"></i>
-                                        Perfil
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt me-2"></i>
-                                        {{ __('Logout') }}
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=96" 
+                                 alt="Avatar de {{ Auth::user()->name }}" 
+                                 class="rounded-circle border border-3 border-primary" 
+                                 style="width: 48px; height: 48px; object-fit: cover;">
+                        @endif
+                    </div>
+                    <div class="fw-bold text-dark">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a href="{{ route('profile.show') }}" class="dropdown-item">
+                    <i class="fas fa-user me-2 text-primary"></i>Mi Perfil
+                </a>
+                
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    {{ __('Cerrar Sesión') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </div>
+        </li>
+    @endguest
+</ul>
                 </div>
             </div>
         </nav>
@@ -425,7 +561,8 @@
 
     @stack('scripts')
 
-    <!-- Bootstrap 5 JavaScript - UNA SOLA VERSIÓN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5.3.0 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>

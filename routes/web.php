@@ -24,6 +24,7 @@ use App\Http\Controllers\EntregaMaterialController;
 use App\Http\Controllers\VentasCentralizadasController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 
 // =============================================================================
@@ -44,6 +45,16 @@ Route::post('/logout', function (Request $request) {
     // Redirigir a la URL externa específica
     return redirect()->away('https://cenefco.com/inicio-clases-virtuales');
 })->name('logout');
+
+// Rutas para el perfil de usuario
+// Rutas para el perfil de usuario
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.avatar.delete');
+});
 
 // 📧 RUTA DE PRUEBA PARA CORREO (TEMPORAL)
 Route::get('/test-mail', function () {
@@ -575,7 +586,9 @@ Route::middleware(['auth', 'module_permission:ventas_centralizadas,view'])->grou
     Route::get('/ventas-centralizadas', [VentasCentralizadasController::class, 'index'])->name('ventas_centralizadas.index');
     
     Route::middleware(['module_permission:ventas_centralizadas,export'])->group(function () {
-        // Agregar rutas de exportación si las tienes
+        Route::get('/ventas-centralizadas', [VentasCentralizadasController::class, 'index'])->name('ventas_centralizadas.index');
+Route::get('/ventas-centralizadas/exportar-pdf', [VentasCentralizadasController::class, 'exportarPDF'])->name('ventas_centralizadas.exportar_pdf');
+
     });
 });
 
@@ -648,6 +661,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/materials/{material}/download', [MaterialController::class, 'download'])->name('materials.download');
     Route::get('/api/materials/by-area', [MaterialController::class, 'getByArea'])->name('materials.by-area');
     Route::get('/materials/export/all', [MaterialController::class, 'export'])->name('materials.export');
+    Route::get('/materials/{material}/preview', [MaterialController::class, 'preview'])->name('materials.preview');
+    Route::get('/materials/file-types', [MaterialController::class, 'getFileTypes'])->name('materials.file-types');
+    Route::get('/materials/{material}/preview', [MaterialController::class, 'preview'])->name('materials.preview');
 });
 // =============================================================================
 // 📊 DASHBOARD ESTADÍSTICAS (Roles específicos)

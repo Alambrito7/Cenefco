@@ -32,25 +32,30 @@
 
                         {{-- Personal que entregó --}}
                         <div class="mb-4">
-                            <label for="personal_entrego" class="form-label fw-semibold">
-                                <i class="fas fa-user-tie me-2 text-primary"></i>Personal que Entregó
-                                <span class="text-danger">*</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                id="personal_entrego" 
-                                name="personal_entrego" 
-                                class="form-control @error('personal_entrego') is-invalid @enderror" 
-                                value="{{ old('personal_entrego', $certificado->personal_entrego ?? '') }}"
-                                placeholder="Nombre del personal responsable"
-                                required
-                            >
-                            @error('personal_entrego')
-                                <div class="invalid-feedback">
-                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+    <label for="personal_entrego_id" class="form-label fw-semibold">
+        <i class="fas fa-user-tie me-2 text-primary"></i>Personal que Entregó
+        <span class="text-danger">*</span>
+    </label>
+    <select 
+        id="personal_entrego_id" 
+        name="personal_entrego_id" 
+        class="form-select @error('personal_entrego_id') is-invalid @enderror" 
+        required
+    >
+        <option value="">Seleccione el personal responsable</option>
+        @foreach($personales as $empleado)
+            <option value="{{ $empleado->id }}" 
+                {{ old('personal_entrego_id', $certificado->personal_entrego_id ?? '') == $empleado->id ? 'selected' : '' }}>
+                {{ $empleado->nombre }} {{ $empleado->apellido }} - {{ $empleado->cargo ?? 'Sin cargo' }}
+            </option>
+        @endforeach
+    </select>
+    @error('personal_entrego_id')
+        <div class="invalid-feedback">
+            <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+        </div>
+    @enderror
+</div>
 
                         {{-- Modalidad de entrega --}}
                         <div class="mb-4">

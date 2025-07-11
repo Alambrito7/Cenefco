@@ -86,7 +86,7 @@
                                 <label for="banco" class="form-label fw-bold">🏦 Banco *</label>
                                 <select name="banco" id="banco" class="form-select @error('banco') is-invalid @enderror" required>
                                     <option value="">Seleccione un banco</option>
-                                    @foreach(['BCP', 'Tigo Money', 'Banco Unión', 'Recibo', 'Western Union'] as $opcion)
+                                    @foreach(['BCP', 'Tigo Money', 'Banco Union', 'Recibo', 'Western Union'] as $opcion)
                                         <option value="{{ $opcion }}" {{ old('banco', $finanza->banco) == $opcion ? 'selected' : '' }}>
                                             {{ $opcion }}
                                         </option>

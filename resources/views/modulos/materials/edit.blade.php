@@ -1,4 +1,4 @@
-{{-- resources/views/modulos/materials/edit.blade.php --}}
+{{-- resources/views/modulos/materials/edit.blade.php - VERSIÓN MULTI-ARCHIVO --}}
 
 @extends('layouts.app')
 
@@ -29,7 +29,7 @@
 
         <!-- Información actual del material -->
         <div class="row justify-content-center mb-4">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div class="card bg-light">
                     <div class="card-body">
                         <h6 class="card-title text-muted mb-3">
@@ -38,33 +38,86 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <strong>Tipo:</strong>
-                                @if($material->isPdf())
-                                    <span class="badge bg-danger ms-1">
-                                        <i class="fas fa-file-pdf me-1"></i>PDF
-                                    </span>
-                                @else
-                                    <span class="badge bg-success ms-1">
-                                        <i class="fas fa-video me-1"></i>Video
-                                    </span>
-                                @endif
+                                <span class="badge bg-{{ $material->getTypeColor() }} ms-1">
+                                    <i class="{{ $material->getTypeIcon() }} me-1"></i>{{ $material->getTypeLabel() }}
+                                </span>
                             </div>
                             <div class="col-md-3">
                                 <strong>Área:</strong>
                                 <span class="badge bg-info ms-1">{{ $material->rama }}</span>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <strong>Creado:</strong>
                                 <small class="text-muted">{{ $material->created_at->format('d/m/Y H:i') }}</small>
                             </div>
+                            <div class="col-md-3">
+                                @if($material->isFile() && $material->file_path)
+                                    <strong>Tamaño:</strong>
+                                    <small class="text-muted">{{ $material->file_size }}</small>
+                                @endif
+                            </div>
                         </div>
+                        
+                        <!-- Mostrar archivo/URL actual -->
+                        @if($material->isFile() && $material->file_path)
+                            <div class="mt-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="{{ $material->getTypeIcon() }} me-2 text-{{ $material->getTypeColor() }}"></i>
+                                    <strong>Archivo actual:</strong>
+                                    <span class="ms-2">{{ $material->file_name }}</span>
+                                    <div class="ms-auto">
+                                        <a href="{{ route('materials.download', $material) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-download me-1"></i>Descargar
+                                        </a>
+                                        @if($material->isImage())
+                                            <a href="{{ route('materials.preview', $material) }}" 
+                                               class="btn btn-sm btn-outline-success" target="_blank">
+                                                <i class="fas fa-eye me-1"></i>Vista Previa
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif($material->isVideo() && $material->video_url)
+                            <div class="mt-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-video me-2 text-secondary"></i>
+                                    <strong>URL actual:</strong>
+                                    <a href="{{ $material->video_url }}" target="_blank" class="ms-2 text-decoration-none">
+                                        {{ Str::limit($material->video_url, 50) }}
+                                    </a>
+                                    <div class="ms-auto">
+                                        <a href="{{ $material->video_url }}" target="_blank" 
+                                           class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-play me-1"></i>Ver Video
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Alertas de errores -->
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Error en el formulario:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <!-- Formulario -->
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div class="card shadow-lg">
                     <div class="card-header bg-warning text-dark">
                         <h5 class="mb-0">
@@ -104,12 +157,15 @@
                                     </label>
                                     <select name="type" id="type" class="form-select @error('type') is-invalid @enderror" required>
                                         <option value="">Seleccionar tipo...</option>
-                                        <option value="pdf" {{ old('type', $material->type) == 'pdf' ? 'selected' : '' }}>
-                                            Archivo PDF
-                                        </option>
-                                        <option value="video" {{ old('type', $material->type) == 'video' ? 'selected' : '' }}>
-                                            Enlace de Video
-                                        </option>
+                                        @foreach($fileTypes as $key => $config)
+                                            <option value="{{ $key }}" 
+                                                    data-extensions="{{ implode(',', $config['extensions']) }}"
+                                                    data-max-size="{{ $config['max_size'] }}"
+                                                    data-accept="{{ $config['accept'] }}"
+                                                    {{ old('type', $material->type) == $key ? 'selected' : '' }}>
+                                                {{ $config['label'] }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     @error('type')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -130,50 +186,48 @@
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Proporciona una descripción clara y detallada del material (mínimo 10 caracteres).
+                                </div>
                             </div>
 
-                            <!-- Archivo PDF (solo visible cuando type = pdf) -->
-                            <div class="mb-4" id="pdfSection" style="display: none;">
+                            <!-- Archivo (para todos los tipos excepto video) -->
+                            <div class="mb-4" id="fileSection" style="display: none;">
                                 <label for="file" class="form-label fw-bold">
-                                    <i class="fas fa-file-pdf me-1 text-danger"></i>Archivo PDF
+                                    <i class="fas fa-file me-1" id="fileIcon"></i>
+                                    <span id="fileLabel">Archivo</span>
                                     <small class="text-muted">(Opcional - Solo si desea cambiar el archivo)</small>
                                 </label>
                                 
-                                <!-- Archivo actual -->
-                                @if($material->isPdf() && $material->file_path)
-                                    <div class="alert alert-info mb-3">
-                                        <i class="fas fa-file-pdf me-2"></i>
-                                        <strong>Archivo actual:</strong> {{ $material->file_name }}
-                                        <br>
-                                        <small>Tamaño: {{ $material->file_size }}</small>
-                                        <div class="mt-2">
-                                            <a href="{{ route('materials.download', $material) }}" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-download me-1"></i>Descargar archivo actual
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                                
                                 <input type="file" name="file" id="file" 
-                                       class="form-control @error('file') is-invalid @enderror" 
-                                       accept=".pdf">
+                                       class="form-control @error('file') is-invalid @enderror">
                                 @error('file')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">
-                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                    Solo archivos PDF. Tamaño máximo: 10MB. Dejar vacío para mantener el archivo actual.
+                                
+                                <div class="form-text" id="fileHelp">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <span id="fileHelpText">Dejar vacío para mantener el archivo actual.</span>
                                 </div>
                                 
                                 <!-- Preview del nuevo archivo -->
                                 <div id="filePreview" class="mt-3" style="display: none;">
                                     <div class="alert alert-success">
-                                        <i class="fas fa-file-pdf me-2"></i>
-                                        <strong>Nuevo archivo seleccionado:</strong>
-                                        <span id="fileName"></span>
-                                        <br>
-                                        <small id="fileSize"></small>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file fa-2x me-3" id="previewIcon"></i>
+                                            <div>
+                                                <strong>Nuevo archivo seleccionado:</strong>
+                                                <span id="fileName"></span>
+                                                <br>
+                                                <small id="fileSize" class="text-muted"></small>
+                                                <span id="fileMimeType" class="badge bg-secondary ms-2"></span>
+                                            </div>
+                                        </div>
+                                        <!-- Preview especial para imágenes -->
+                                        <div id="imagePreview" class="mt-3" style="display: none;">
+                                            <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -185,21 +239,10 @@
                                     <span class="text-danger">*</span>
                                 </label>
                                 
-                                <!-- URL actual -->
-                                @if($material->isVideo() && $material->video_url)
-                                    <div class="alert alert-info mb-3">
-                                        <i class="fas fa-video me-2"></i>
-                                        <strong>URL actual:</strong>
-                                        <a href="{{ $material->video_url }}" target="_blank" class="alert-link">
-                                            {{ $material->video_url }}
-                                        </a>
-                                    </div>
-                                @endif
-                                
                                 <input type="url" name="video_url" id="video_url" 
                                        class="form-control @error('video_url') is-invalid @enderror" 
                                        value="{{ old('video_url', $material->video_url) }}"
-                                       placeholder="https://www.youtube.com/watch?v=...">
+                                       placeholder="https://www.youtube.com/watch?v=... o https://vimeo.com/...">
                                 @error('video_url')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -214,6 +257,27 @@
                                         <i class="fas fa-video me-2"></i>
                                         <strong>Video:</strong>
                                         <a href="#" id="videoLink" target="_blank" class="alert-link">Ver video</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de límites según tipo -->
+                            <div class="mb-4" id="typeInfo" style="display: none;">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary mb-3">
+                                            <i class="fas fa-info-circle me-1"></i>Información del Tipo Seleccionado
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <strong>Extensiones permitidas:</strong>
+                                                <div id="allowedExtensions" class="mt-1"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Tamaño máximo:</strong>
+                                                <div id="maxFileSize" class="mt-1"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -234,6 +298,13 @@
                                     <input type="text" class="form-control" 
                                            value="{{ $material->updated_at->format('d/m/Y H:i') }}" readonly>
                                 </div>
+                            </div>
+
+                            <!-- Debug info -->
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Estado del formulario:</strong>
+                                <span id="debugInfo">Formulario listo para edición</span>
                             </div>
 
                             <!-- Botones -->
@@ -263,79 +334,200 @@
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- Scripts mejorados para edición multi-archivo -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔧 Iniciando JavaScript del formulario de edición...');
+    console.log('🔧 Iniciando JavaScript del formulario de edición multi-archivo...');
     
     const typeSelect = document.getElementById('type');
-    const pdfSection = document.getElementById('pdfSection');
+    const fileSection = document.getElementById('fileSection');
     const videoSection = document.getElementById('videoSection');
+    const typeInfo = document.getElementById('typeInfo');
     const fileInput = document.getElementById('file');
     const videoUrlInput = document.getElementById('video_url');
     const submitBtn = document.getElementById('submitBtn');
+    const debugInfo = document.getElementById('debugInfo');
     const form = document.getElementById('materialForm');
+
+    // Configuración de tipos de archivo
+    const fileTypeConfigs = {
+        pdf: {
+            icon: 'fas fa-file-pdf',
+            color: 'danger',
+            label: 'Archivo PDF',
+            extensions: ['pdf'],
+            maxSize: 10240
+        },
+        image: {
+            icon: 'fas fa-image',
+            color: 'success',
+            label: 'Imagen',
+            extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
+            maxSize: 5120
+        },
+        document: {
+            icon: 'fas fa-file-word',
+            color: 'primary',
+            label: 'Documento Word',
+            extensions: ['doc', 'docx'],
+            maxSize: 15360
+        },
+        executable: {
+            icon: 'fas fa-cog',
+            color: 'warning',
+            label: 'Programa/Ejecutable',
+            extensions: ['exe', 'msi'],
+            maxSize: 512000
+        },
+        compressed: {
+            icon: 'fas fa-file-archive',
+            color: 'info',
+            label: 'Archivo Comprimido',
+            extensions: ['zip', 'rar', '7z', 'tar', 'gz'],
+            maxSize: 102400
+        },
+        video: {
+            icon: 'fas fa-video',
+            color: 'secondary',
+            label: 'Video (URL)',
+            extensions: [],
+            maxSize: 0
+        }
+    };
+
+    // Material original para comparar cambios
+    const originalType = '{{ $material->type }}';
+
+    // Función para actualizar debug info
+    function updateDebug(message) {
+        debugInfo.textContent = message;
+        console.log('📋 Debug:', message);
+    }
 
     // Función para limpiar campos según el tipo
     function resetFieldsForType(type) {
-        if (type === 'pdf') {
-            // Si cambia a PDF, limpiar video URL pero no remover el campo
-            // (solo limpiar si realmente está cambiando de tipo)
-            if (videoUrlInput.value && type !== '{{ $material->type }}') {
-                videoUrlInput.value = '';
-            }
-            videoUrlInput.removeAttribute('required');
-        } else if (type === 'video') {
-            // Si cambia a video, limpiar archivo
-            if (fileInput.value) {
-                fileInput.value = '';
-                document.getElementById('filePreview').style.display = 'none';
-            }
+        if (type === 'video') {
+            fileInput.value = '';
             fileInput.removeAttribute('required');
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('imagePreview').style.display = 'none';
+        } else {
+            videoUrlInput.removeAttribute('required');
+            if (type !== originalType) {
+                // Solo limpiar video URL si se está cambiando de tipo
+                videoUrlInput.value = '';
+                document.getElementById('videoPreview').style.display = 'none';
+            }
+        }
+    }
+
+    // Función para actualizar la interfaz según el tipo
+    function updateTypeInterface(selectedType) {
+        const config = fileTypeConfigs[selectedType];
+        if (!config) return;
+
+        // Actualizar iconos y etiquetas
+        const fileIcon = document.getElementById('fileIcon');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileHelpText = document.getElementById('fileHelpText');
+        
+        fileIcon.className = config.icon + ' me-1 text-' + config.color;
+        fileLabel.textContent = config.label;
+        
+        // Actualizar información del tipo
+        if (selectedType !== 'video') {
+            const extensions = config.extensions.join(', ').toUpperCase();
+            const maxSizeMB = Math.round(config.maxSize / 1024);
+            
+            fileHelpText.textContent = `Archivos permitidos: ${extensions}. Tamaño máximo: ${maxSizeMB}MB. Dejar vacío para mantener el archivo actual.`;
+            fileInput.accept = '.' + config.extensions.join(',.');
+            
+            // Mostrar información detallada
+            document.getElementById('allowedExtensions').innerHTML = 
+                config.extensions.map(ext => `<span class="badge bg-${config.color} me-1">.${ext}</span>`).join('');
+            document.getElementById('maxFileSize').innerHTML = 
+                `<span class="badge bg-secondary">${maxSizeMB}MB</span>`;
+            
+            typeInfo.style.display = 'block';
+        } else {
+            typeInfo.style.display = 'none';
         }
     }
 
     // Mostrar/ocultar secciones según el tipo
     function toggleSections() {
         const selectedType = typeSelect.value;
-        console.log('Tipo seleccionado:', selectedType);
+        updateDebug(`Tipo seleccionado: ${selectedType}`);
         
         // Resetear campos según el tipo
         resetFieldsForType(selectedType);
         
-        if (selectedType === 'pdf') {
-            pdfSection.style.display = 'block';
-            videoSection.style.display = 'none';
-            videoUrlInput.removeAttribute('required');
-            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar PDF';
-        } else if (selectedType === 'video') {
-            pdfSection.style.display = 'none';
+        if (selectedType === 'video') {
+            fileSection.style.display = 'none';
             videoSection.style.display = 'block';
+            typeInfo.style.display = 'none';
             videoUrlInput.setAttribute('required', 'required');
             submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar Video';
-        } else {
-            pdfSection.style.display = 'none';
+            updateDebug('Modo Video activado - URL requerida');
+        } else if (selectedType) {
+            fileSection.style.display = 'block';
             videoSection.style.display = 'none';
             videoUrlInput.removeAttribute('required');
+            updateTypeInterface(selectedType);
+            submitBtn.innerHTML = `<i class="fas fa-save me-2"></i>Actualizar ${fileTypeConfigs[selectedType].label}`;
+            updateDebug(`Modo ${fileTypeConfigs[selectedType].label} activado`);
+        } else {
+            fileSection.style.display = 'none';
+            videoSection.style.display = 'none';
+            typeInfo.style.display = 'none';
+            videoUrlInput.removeAttribute('required');
             submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar Material';
+            updateDebug('Esperando selección de tipo');
         }
     }
 
     // Event listener para cambio de tipo
     typeSelect.addEventListener('change', toggleSections);
 
-    // Preview del archivo PDF
+    // Preview del archivo
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
         const filePreview = document.getElementById('filePreview');
+        const imagePreview = document.getElementById('imagePreview');
         
         if (file) {
+            // Información básica del archivo
             document.getElementById('fileName').textContent = file.name;
             document.getElementById('fileSize').textContent = `Tamaño: ${formatFileSize(file.size)}`;
+            document.getElementById('fileMimeType').textContent = file.type;
+            
+            // Icono según el tipo
+            const previewIcon = document.getElementById('previewIcon');
+            const selectedType = typeSelect.value;
+            const config = fileTypeConfigs[selectedType];
+            if (config) {
+                previewIcon.className = config.icon + ' fa-2x me-3 text-' + config.color;
+            }
+            
             filePreview.style.display = 'block';
-            console.log('Archivo seleccionado:', file.name);
+            
+            // Preview especial para imágenes
+            if (selectedType === 'image' && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+            
+            updateDebug(`Nuevo archivo seleccionado: ${file.name} (${formatFileSize(file.size)})`);
         } else {
             filePreview.style.display = 'none';
+            imagePreview.style.display = 'none';
+            updateDebug('Sin archivo nuevo seleccionado');
         }
     });
 
@@ -349,53 +541,77 @@ document.addEventListener('DOMContentLoaded', function() {
             videoLink.href = url;
             videoLink.textContent = url;
             videoPreview.style.display = 'block';
-            console.log('URL válida:', url);
+            updateDebug(`URL válida: ${url}`);
         } else {
             videoPreview.style.display = 'none';
+            if (url) {
+                updateDebug(`URL inválida: ${url}`);
+            } else {
+                updateDebug('Sin URL de video');
+            }
         }
     });
 
-    // VALIDACIÓN CRÍTICA DEL FORMULARIO
+    // Validación del formulario
     form.addEventListener('submit', function(e) {
         const type = typeSelect.value;
-        console.log('Enviando formulario con tipo:', type);
+        updateDebug('Intentando enviar formulario...');
         
         if (!type) {
             e.preventDefault();
             alert('Por favor, selecciona un tipo de material.');
+            updateDebug('❌ Error: Tipo no seleccionado');
             return false;
         }
         
-        // CRUCIAL: Limpiar campos conflictivos antes del envío
-        if (type === 'pdf') {
-            // Si es PDF, asegurar que video_url esté vacío o se remueva
-            if (videoUrlInput.value.trim() === '') {
-                videoUrlInput.removeAttribute('name');
-            }
-        } else if (type === 'video') {
-            // Si es video, verificar que tenga URL válida
+        // Limpiar campos conflictivos
+        if (type === 'video') {
+            fileInput.removeAttribute('name');
+            
             if (!videoUrlInput.value.trim()) {
                 e.preventDefault();
                 alert('Por favor, ingresa la URL del video.');
+                updateDebug('❌ Error: URL de video vacía');
                 return false;
             }
             
             if (!isValidUrl(videoUrlInput.value.trim())) {
                 e.preventDefault();
                 alert('Por favor, ingresa una URL válida.');
+                updateDebug('❌ Error: URL de video inválida');
                 return false;
             }
+        } else {
+            videoUrlInput.removeAttribute('name');
             
-            // Limpiar archivo si se seleccionó alguno
-            if (fileInput.value) {
-                fileInput.removeAttribute('name');
+            // Validar archivo si se seleccionó uno nuevo
+            if (fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const config = fileTypeConfigs[type];
+                const extension = file.name.split('.').pop().toLowerCase();
+                
+                if (!config.extensions.includes(extension)) {
+                    e.preventDefault();
+                    alert(`El archivo debe ser de tipo: ${config.extensions.join(', ')}`);
+                    updateDebug('❌ Error: Extensión no válida');
+                    return false;
+                }
+                
+                // Validar tamaño
+                const fileSizeKB = file.size / 1024;
+                if (fileSizeKB > config.maxSize) {
+                    e.preventDefault();
+                    alert(`El archivo no debe exceder ${Math.round(config.maxSize / 1024)}MB`);
+                    updateDebug('❌ Error: Archivo muy grande');
+                    return false;
+                }
             }
         }
         
         // Mostrar indicador de carga
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Actualizando...';
-        console.log('✅ Formulario válido, enviando...');
+        updateDebug('✅ Formulario válido, enviando...');
         
         return true;
     });
@@ -426,7 +642,8 @@ document.addEventListener('DOMContentLoaded', function() {
         videoUrlInput.dispatchEvent(new Event('input'));
     }
     
-    console.log('✅ JavaScript del formulario de edición cargado correctamente');
+    updateDebug(`Formulario de edición inicializado - Tipo original: ${originalType}`);
+    console.log('✅ JavaScript del formulario de edición multi-archivo cargado correctamente');
 });
 </script>
 
@@ -474,8 +691,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 /* Animaciones */
-#pdfSection,
-#videoSection {
+#fileSection,
+#videoSection,
+#typeInfo {
     transition: all 0.3s ease;
 }
 
@@ -486,6 +704,37 @@ document.addEventListener('DOMContentLoaded', function() {
 .form-control[readonly] {
     background-color: #f8f9fa;
     opacity: 1;
+}
+
+/* Preview de imagen */
+.img-thumbnail {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+}
+
+/* Badges para extensiones */
+.badge {
+    font-size: 0.75em;
+}
+
+/* Estilos para información del material actual */
+.bg-light .card-body {
+    border-radius: 10px;
+}
+
+/* Hover effects */
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* File input styling */
+.form-control[type="file"] {
+    padding: 0.5rem;
+}
+
+.form-control[type="file"]:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 </style>
 @endsection

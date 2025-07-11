@@ -40,13 +40,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="d-flex justify-content-end gap-2">
-                    <div class="btn-group" role="group">
-                        <a href="{{ route('materials.export') }}" class="btn btn-outline-success">
-                            <i class="fas fa-download me-2"></i>Exportar
-                        </a>
-                    </div>
-                </div>
+                
             </div>
         </div>
 
@@ -60,13 +54,17 @@
                                placeholder="Buscar por descripción...">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Filtrar por tipo</label>
-                        <select class="form-select" id="typeFilter">
-                            <option value="">Todos los tipos</option>
-                            <option value="pdf">PDF</option>
-                            <option value="video">Video</option>
-                        </select>
-                    </div>
+    <label class="form-label">Filtrar por tipo</label>
+    <select class="form-select" id="typeFilter">
+        <option value="">Todos los tipos</option>
+        <option value="pdf">📄 PDF</option>
+        <option value="image">🖼️ Imagen</option>
+        <option value="document">📝 Documento Word</option>
+        <option value="executable">⚙️ Ejecutable</option>
+        <option value="compressed">🗃️ Archivo Comprimido</option>
+        <option value="video">🎥 Video</option>
+    </select>
+</div>
                     <div class="col-md-3">
                         <label class="form-label">Filtrar por área</label>
                         <select class="form-select" id="areaFilter">
@@ -85,70 +83,136 @@
             </div>
         </div>
 
-        <!-- Estadísticas -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Total Materiales</h5>
-                                <h3 class="mb-0">{{ $stats['total'] }}</h3>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-folder fa-2x opacity-75"></i>
-                            </div>
-                        </div>
+        <!-- Estadísticas actualizadas -->
+<!-- Reemplaza la sección de estadísticas en tu index.blade.php -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total</h6>
+                        <h4 class="mb-0">{{ $stats['total'] }}</h4>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-danger text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">PDFs</h5>
-                                <h3 class="mb-0">{{ $stats['pdfs'] }}</h3>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-file-pdf fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Videos</h5>
-                                <h3 class="mb-0">{{ $stats['videos'] }}</h3>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-video fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Eliminados</h5>
-                                <h3 class="mb-0">{{ $stats['deleted'] }}</h3>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-trash fa-2x opacity-75"></i>
-                            </div>
-                        </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-folder fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">PDFs</h6>
+                        <h4 class="mb-0">{{ $stats['pdfs'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-file-pdf fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Imágenes</h6>
+                        <h4 class="mb-0">{{ $stats['images'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-image fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Docs</h6>
+                        <h4 class="mb-0">{{ $stats['documents'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-file-word fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Programas</h6>
+                        <h4 class="mb-0">{{ $stats['executables'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-cog fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Archivos</h6>
+                        <h4 class="mb-0">{{ $stats['compressed'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-file-archive fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Segunda fila para videos y eliminados -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Videos</h6>
+                        <h4 class="mb-0">{{ $stats['videos'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-video fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-dark text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Eliminados</h6>
+                        <h4 class="mb-0">{{ $stats['deleted'] }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-trash fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Espacio vacío para mantener el diseño -->
+    <div class="col-md-8"></div>
+</div>
         <!-- Tabla principal -->
         <div class="card">
             <div class="card-header bg-dark text-white">
@@ -171,105 +235,112 @@
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($materials as $material)
-                            <tr class="material-row">
-                                <td class="text-center fw-bold">
-                                    <span class="badge bg-light text-dark">{{ $material->id }}</span>
-                                </td>
-                                <td class="text-center">
-                                    @if($material->isPdf())
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-file-pdf me-1"></i>PDF
-                                        </span>
-                                    @else
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-video me-1"></i>Video
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-info">{{ $material->rama }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-truncate d-inline-block" style="max-width: 200px;" 
-                                          title="{{ $material->description }}">
-                                        {{ $material->description }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    @if($material->isPdf())
-                                        <div>
-                                            <strong>{{ $material->file_name }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ $material->file_size }}</small>
-                                        </div>
-                                    @else
-                                        <a href="{{ $material->video_url }}" target="_blank" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-external-link-alt me-1"></i>Ver Video
-                                        </a>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    <small class="text-muted">
-                                        {{ $material->created_at->format('d/m/Y H:i') }}
-                                    </small>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <!-- Ver/Descargar -->
-                                        @if($material->isPdf())
-                                            <a href="{{ route('materials.download', $material) }}" 
-                                               class="btn btn-info btn-sm" 
-                                               title="Descargar PDF">
-                                                <i class="fas fa-download"></i>
-                                            </a>
-                                        @else
-                                            <a href="{{ $material->video_url }}" target="_blank"
-                                               class="btn btn-info btn-sm" 
-                                               title="Ver video">
-                                                <i class="fas fa-play"></i>
-                                            </a>
-                                        @endif
-                                        
-                                        <!-- Editar -->
-                                        <a href="{{ route('materials.edit', $material) }}" 
-                                           class="btn btn-warning btn-sm" 
-                                           title="Editar material">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        
-                                        <!-- Eliminar -->
-                                        <form action="{{ route('materials.destroy', $material) }}" 
-                                              method="POST" 
-                                              style="display: inline;" 
-                                              onsubmit="return confirm('¿Está seguro de eliminar este material?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" 
-                                                    class="btn btn-danger btn-sm" 
-                                                    title="Eliminar material">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-folder-open fa-3x mb-3"></i>
-                                        <h5>No hay materiales registrados</h5>
-                                        <p>Comience agregando un nuevo material</p>
-                                        <a href="{{ route('materials.create') }}" class="btn btn-primary">
-                                            <i class="fas fa-plus me-2"></i>Agregar Primer Material
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
+                        <!-- Reemplaza la sección de la tabla en tu index.blade.php -->
+<tbody>
+    @forelse($materials as $material)
+    <tr class="material-row">
+        <td class="text-center fw-bold">
+            <span class="badge bg-light text-dark">{{ $material->id }}</span>
+        </td>
+        <td class="text-center">
+            <span class="badge bg-{{ $material->getTypeColor() }}">
+                <i class="{{ $material->getTypeIcon() }} me-1"></i>{{ $material->getTypeLabel() }}
+            </span>
+        </td>
+        <td class="text-center">
+            <span class="badge bg-info">{{ $material->rama }}</span>
+        </td>
+        <td class="text-center">
+            <span class="text-truncate d-inline-block" style="max-width: 200px;" 
+                  title="{{ $material->description }}">
+                {{ $material->description }}
+            </span>
+        </td>
+        <td class="text-center">
+            @if($material->isFile())
+                <div>
+                    <strong>{{ $material->file_name }}</strong>
+                    <br>
+                    <small class="text-muted">{{ $material->file_size }}</small>
+                    @if($material->mime_type)
+                        <br>
+                        <span class="badge bg-secondary" style="font-size: 0.7em;">{{ $material->mime_type }}</span>
+                    @endif
+                </div>
+            @else
+                <a href="{{ $material->video_url }}" target="_blank" 
+                   class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-1"></i>Ver Video
+                </a>
+            @endif
+        </td>
+        <td class="text-center">
+            <small class="text-muted">
+                {{ $material->created_at->format('d/m/Y H:i') }}
+            </small>
+        </td>
+        <td class="text-center">
+            <div class="btn-group" role="group">
+                <!-- Ver/Descargar/Preview -->
+                @if($material->isFile())
+                    @if($material->isImage())
+                        <a href="{{ route('materials.preview', $material) }}" 
+                           class="btn btn-info btn-sm" 
+                           title="Vista previa"
+                           target="_blank">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    @endif
+                    <a href="{{ route('materials.download', $material) }}" 
+                       class="btn btn-success btn-sm" 
+                       title="Descargar archivo">
+                        <i class="fas fa-download"></i>
+                    </a>
+                @else
+                    <a href="{{ $material->video_url }}" target="_blank"
+                       class="btn btn-info btn-sm" 
+                       title="Ver video">
+                        <i class="fas fa-play"></i>
+                    </a>
+                @endif
+                
+                <!-- Editar -->
+                <a href="{{ route('materials.edit', $material) }}" 
+                   class="btn btn-warning btn-sm" 
+                   title="Editar material">
+                    <i class="fas fa-edit"></i>
+                </a>
+                
+                <!-- Eliminar -->
+                <form action="{{ route('materials.destroy', $material) }}" 
+                      method="POST" 
+                      style="display: inline;" 
+                      onsubmit="return confirm('¿Está seguro de eliminar este material?')">
+                    @csrf @method('DELETE')
+                    <button type="submit" 
+                            class="btn btn-danger btn-sm" 
+                            title="Eliminar material">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="7" class="text-center py-5">
+            <div class="text-muted">
+                <i class="fas fa-folder-open fa-3x mb-3"></i>
+                <h5>No hay materiales registrados</h5>
+                <p>Comience agregando un nuevo material</p>
+                <a href="{{ route('materials.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Agregar Primer Material
+                </a>
+            </div>
+        </td>
+    </tr>
+    @endforelse
+</tbody>
                     </table>
                 </div>
             </div>

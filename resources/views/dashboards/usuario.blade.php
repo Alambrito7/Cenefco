@@ -5,23 +5,102 @@
     <!-- Navigation Bar -->
     <nav class="top-nav">
         <div class="nav-container">
-            <div class="nav-brand">
-                <div class="brand-icon">
-                    <i class="fas fa-gem"></i>
-                </div>
-                <span class="brand-text">CENEFCO</span>
-            </div>
+        <div class="nav-brand">
+    @php
+        $homeRoute = '/';
+        if (Auth::check()) {
+            $user = Auth::user();
+            $homeRoute = match($user->role) {
+                'superadmin' => route('superadmin.dashboard'),
+                'admin' => route('admin.dashboard'),
+                'agente_academico' => route('agente_academico.dashboard'),
+                'agente_administrativo' => route('agente_administrativo.dashboard'),
+                'agente_ventas' => route('agente_ventas.dashboard'),
+                'usuario' => route('usuario.dashboard'),
+                default => route('usuario.dashboard'),
+            };
+        }
+    @endphp
+    
+    <a href="{{ $homeRoute }}" class="brand-link">
+        <div class="brand-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <span class="brand-text">{{ config('app.name', 'CENEFCO') }}</span>
+    </a>
+</div>
             <div class="nav-actions">
                 <button class="nav-btn">
                     <i class="fas fa-bell"></i>
                     <span class="notification-dot"></span>
                 </button>
-                <div class="user-menu">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <span class="user-name">{{ auth()->check() ? (auth()->user()->name ?? 'Usuario') : 'Invitado' }}</span>
+                <div class="user-menu dropdown">
+    @guest
+        <div class="user-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <span class="user-name">Invitado</span>
+    @else
+        <div class="user-avatar dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">
+            @if(Auth::user()->avatar)
+                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                     alt="Avatar de {{ Auth::user()->name }}" 
+                     class="rounded-circle" 
+                     style="width: 32px; height: 32px; object-fit: cover;"
+                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=64';">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=64" 
+                     alt="Avatar de {{ Auth::user()->name }}" 
+                     class="rounded-circle" 
+                     style="width: 32px; height: 32px; object-fit: cover;">
+            @endif
+        </div>
+        <span class="user-name dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">
+            {{ Auth::user()->name }}
+        </span>
+        
+        <!-- Dropdown Menu -->
+        <div class="dropdown-menu dropdown-menu-end">
+            <!-- Header del dropdown con avatar más grande -->
+            <div class="dropdown-header text-center py-3">
+                <div class="mb-2">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                             alt="Avatar de {{ Auth::user()->name }}" 
+                             class="rounded-circle border border-3 border-primary" 
+                             style="width: 48px; height: 48px; object-fit: cover;"
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=96';">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->getInitials()) }}&background=0d6efd&color=ffffff&size=96" 
+                             alt="Avatar de {{ Auth::user()->name }}" 
+                             class="rounded-circle border border-3 border-primary" 
+                             style="width: 48px; height: 48px; object-fit: cover;">
+                    @endif
                 </div>
+                <div class="fw-bold text-dark">{{ Auth::user()->name }}</div>
+                <small class="text-muted">{{ Auth::user()->email }}</small>
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <a href="{{ route('profile.show') }}" class="dropdown-item">
+                <i class="fas fa-user me-2 text-primary"></i>Mi Perfil
+            </a>
+            
+            <div class="dropdown-divider"></div>
+            
+            <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                {{ __('Cerrar Sesión') }}
+            </a>
+            
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        </div>
+    @endguest
+</div>
             </div>
         </div>
     </nav>
@@ -607,6 +686,37 @@
         color: var(--text-secondary);
         font-size: 0.9rem;
     }
+
+    .brand-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.brand-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.user-avatar {
+    margin-right: 8px;
+}
+
+.user-name {
+    font-weight: 500;
+}
+
+.dropdown-toggle::after {
+    display: none; /* Oculta la flecha por defecto de Bootstrap */
+}
 
     /* Main Content */
     /* REEMPLÁZALO POR: */
@@ -1422,7 +1532,7 @@
             
             shapes.forEach((shape, index) => {
                 const speed = 0.1 + (index * 0.05);
-                shape.style.transform = `translateY(${scrolled * speed}px)`;
+                shape.style.transform = translateY(${scrolled * speed}px);
             });
         });
 
@@ -1486,7 +1596,7 @@
         // Add notification system
         const showNotification = (message, type = 'info') => {
             const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
+            notification.className = notification notification-${type};
             notification.innerHTML = `
                 <div class="notification-content" style="
                     display: flex;
